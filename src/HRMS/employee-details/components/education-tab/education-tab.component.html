@@ -1,0 +1,298 @@
+<div class="tab-content family-tab-content">
+  <div class="content-header-row">
+    <div><h3>Education Details</h3><p>Add or Edit Employee Education Details</p></div>
+    <button class="btn-add-family" (click)="addEducation.emit()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Education
+    </button>
+  </div>
+  <div class="table-responsive">
+    <table class="family-table">
+      <thead>
+        <tr>
+          <th>S No</th><th>Qualification</th><th>Branch</th><th>Institute / College</th>
+          <th>University</th><th>Year of Passing</th><th>% of Marks</th>
+          <th>Education Type</th>
+          <!-- <th>Is Considered</th><th>Wage Review</th> -->
+          <!-- <th>Is Scale</th> -->
+          <th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of educationRecords; track r.id; let i = $index) {
+          <tr [class.row-deleting]="deletingEducationId === r.id">
+            <td>{{ (i+1).toString().padStart(2,'0') }}</td>
+            <td>{{ r.qualificationId }}</td>
+            <td>{{ r.branchId || '—' }}</td>
+            <td>{{ r.institute }}</td>
+            <td>{{ getUniversityName(r.universityId) }}</td>
+            <td>{{ r.yearOfPassing }}</td>
+            <td>{{ r.percentageOfMarks !== null ? r.percentageOfMarks + '%' : '—' }}</td>
+            <td>{{ getEducationTypeName(r.educationTypeId) }}</td>
+            <!-- <td><span class="bool-badge" [class.bool-yes]="r.isConsidered === 1">{{ r.isConsidered === 1 ? 'Yes' : 'No' }}</span></td> -->
+            <!-- <td><span class="bool-badge" [class.bool-yes]="r.isWageReview === 1">{{ r.isWageReview === 1 ? 'Yes' : 'No' }}</span></td> -->
+            <!-- <td><span class="bool-badge" [class.bool-yes]="r.isScale === 1">{{ r.isScale === 1 ? 'Yes' : 'No' }}</span></td> -->
+            <td>
+              <span class="status-badge"
+                    [class.badge-active]="r.status === 1001"
+                    [class.badge-inactive]="r.status === 1002">
+                <span class="badge-dot"></span>{{ r.status === 1001 ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <button class="btn-icon-edit" [disabled]="r.status !== 1001" [title]="r.status !== 1001 ? 'Inactive — cannot edit' : 'Edit'" (click)="editRecord.emit(r)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-status-toggle"
+                      [class.btn-deactivate]="r.status === 1001"
+                      [class.btn-activate]="r.status === 1002"
+                      [disabled]="deletingEducationId === r.id"
+                      [title]="r.status === 1001 ? 'Mark as Inactive' : 'Mark as Active'"
+                      (click)="toggleStatus.emit(r)">
+                @if (deletingEducationId === r.id) {
+                  <span class="spin-xs"></span>
+                } @else {
+                  {{ r.status === 1001 ? 'Inactive' : 'Active' }}
+                }
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="13" class="no-data"><div class="no-data-inner"><p>No education records added yet</p><button class="btn-link" (click)="addEducation.emit()">+ Add Education</button></div></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ EDUCATION MODAL ══════════════ -->
+@if (showEducationModal) {
+  <div class="modal-overlay" (click)="closeModal.emit()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>{{ editingEducationId !== null ? 'Edit Education Record' : 'Add Education Details' }}</h3>
+          <div class="modal-subtitle">{{ empSubtitle }}</div>
+        </div>
+        <button class="modal-close" (click)="closeModal.emit()">×</button>
+      </div>
+      <form [formGroup]="educationForm" (ngSubmit)="saveRecord.emit()" class="modal-body">
+        @if (isEducationSaving) {
+          <div class="modal-loading-overlay"><span class="spin-md"></span></div>
+        }
+        @if (educationSaveError) {
+          <div class="form-error-banner">{{ educationSaveError }}</div>
+        }
+        <div class="field-grid edit-grid">
+          <!-- Qualification — searchable typeahead -->
+          <div class="field-edit">
+            <label>Qualification <span class="req">*</span></label>
+            <div class="univ-search-wrapper" [class.error-input]="isInvalid(educationForm,'qualificationId')">
+              <div class="univ-input-row">
+                <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text"
+                       class="univ-search-input"
+                       [value]="qualificationSearch"
+                       (input)="qualificationInput.emit($event)"
+                       (focus)="showQualificationDropdown = true"
+                       (blur)="onQualBlur()"
+                       placeholder="Search qualification…"
+                       autocomplete="off"
+                       appLettersOnly />
+                @if (qualificationSearch) {
+                  <button type="button" class="univ-clear-btn" (click)="qualificationCleared.emit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                }
+              </div>
+              @if (educationForm.get('qualificationId')?.value) {
+                <span class="univ-selected-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Selected
+                </span>
+              }
+              @if (showQualificationDropdown) {
+                <div class="univ-dropdown-list">
+                  @if (filteredQualifications.length === 0) {
+                    <div class="univ-no-results">No qualifications found</div>
+                  } @else {
+                    @for (ql of filteredQualifications; track ql.qualificationId) {
+                      <div class="univ-option" (mousedown)="onQualSelect(ql)">{{ ql.qualificationName }}</div>
+                    }
+                  }
+                </div>
+              }
+            </div>
+            @if (fieldError(educationForm,'qualificationId','required')) {
+              <span class="err">Please select a qualification</span>
+            }
+          </div>
+          <!-- Branch — loaded dynamically when qualification is selected -->
+          <div class="field-edit">
+            <label>Branch</label>
+            <select formControlName="branchId"
+                    [class.select-disabled-style]="educationForm.get('branchId')?.disabled">
+              <option [value]="null">
+                @if (isLoadingBranches) {
+                  Loading branches…
+                } @else if (!educationForm.get('qualificationId')?.value) {
+                  — Select a qualification first —
+                } @else if (educationBranches.length === 0) {
+                  — No branches for this qualification —
+                } @else {
+                  Select branch
+                }
+              </option>
+              @for (b of educationBranches; track b.branchId) {
+                <option [value]="b.branchId">{{ b.branchName }}</option>
+              }
+            </select>
+            @if (showBranchHint) {
+              <span class="branch-no-data-hint">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                No branches linked to this qualification. Branch selection is not required.
+              </span>
+            }
+          </div>
+          <!-- Institute -->
+          <div class="field-edit">
+            <label>Institute / College <span class="req">*</span></label>
+            <input type="text" formControlName="institute" placeholder="e.g. JNTUK" appNoLeadingSpace
+                   [class.error-input]="isInvalid(educationForm,'institute')" />
+            @if (fieldError(educationForm,'institute','required')) {
+              <span class="err">Institute / College name is required</span>
+            }
+          </div>
+          <!-- University — searchable typeahead -->
+          <div class="field-edit">
+            <label>University</label>
+            <div class="univ-search-wrapper">
+              <div class="univ-input-row">
+                <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text"
+                       class="univ-search-input"
+                       [value]="universitySearch"
+                       (input)="universityInput.emit($event)"
+                       (focus)="showUniversityDropdown = true"
+                       (blur)="onUnivBlur()"
+                       placeholder="Search university…"
+                       autocomplete="off"
+                       appLettersOnly />
+                @if (universitySearch) {
+                  <button type="button" class="univ-clear-btn" (click)="universityCleared.emit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                }
+              </div>
+              @if (educationForm.get('universityId')?.value) {
+                <span class="univ-selected-badge">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  Selected
+                </span>
+              }
+              @if (showUniversityDropdown) {
+                <div class="univ-dropdown-list">
+                  @if (filteredUniversities.length === 0) {
+                    <div class="univ-no-results">No universities found</div>
+                  } @else {
+                    @for (u of filteredUniversities; track u.universityId) {
+                      <div class="univ-option" (mousedown)="onUnivSelect(u)">{{ u.universityName }}</div>
+                    }
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Year of Passing -->
+          <div class="field-edit">
+            <label>Year of Passing <span class="req">*</span></label>
+            <input type="text" inputmode="numeric" formControlName="yearOfPassing" maxlength="4" placeholder="e.g. 2020"
+                   appFourDigitYear appNoLeadingSpace
+                   [class.error-input]="isInvalid(educationForm,'yearOfPassing')" />
+            @if (fieldError(educationForm,'yearOfPassing','required')) {
+              <span class="err">Year of passing is required</span>
+            }
+            @if (fieldError(educationForm,'yearOfPassing','pattern')) {
+              <span class="err">Enter a valid 4-digit year</span>
+            }
+          </div>
+          <!-- Percentage -->
+          <div class="field-edit">
+            <label>Percentage of Marks</label>
+            <div class="input-with-unit">
+              <input type="text" inputmode="numeric" formControlName="percentageOfMarks" maxlength="3" placeholder="0–100"
+                     appFourDigitYear [maxDigits]="3"
+                     [class.error-input]="isInvalid(educationForm,'percentageOfMarks')" />
+              <span class="unit">%</span>
+            </div>
+            @if (fieldError(educationForm,'percentageOfMarks','min') || fieldError(educationForm,'percentageOfMarks','max')) {
+              <span class="err">Percentage must be between 0 and 100</span>
+            }
+          </div>
+          <!-- Education Type dropdown -->
+          <div class="field-edit">
+            <label>Education Type <span class="req">*</span></label>
+            <select formControlName="educationTypeId" [class.error-input]="isInvalid(educationForm,'educationTypeId')">
+              <option [value]="null">Select education type</option>
+              @for (et of educationTypes; track et.educationTypeId) {
+                <option [value]="et.educationTypeId?.toString()">{{ et.educationTypeName }}</option>
+              }
+            </select>
+            @if (fieldError(educationForm,'educationTypeId','required')) {
+              <span class="err">Please select an education type</span>
+            }
+          </div>
+        </div>
+
+        <!-- Boolean flags as toggle cards -->
+        <p class="modal-section-label">Flags</p>
+        <div class="nominee-grid">
+          <div class="nominee-card" [class.nominee-card-active]="educationForm.get('isConsidered')?.value">
+            <label class="nominee-toggle-row">
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isConsidered" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </div>
+              <div class="toggle-text-block">
+                <span class="toggle-label-main">Is Considered</span>
+                <span class="toggle-label-sub">Considered for this employee</span>
+              </div>
+            </label>
+          </div>
+          <div class="nominee-card" [class.nominee-card-active]="educationForm.get('isWageReview')?.value">
+            <label class="nominee-toggle-row">
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isWageReview" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </div>
+              <div class="toggle-text-block">
+                <span class="toggle-label-main">For Wage Review</span>
+                <span class="toggle-label-sub">Used in wage review process</span>
+              </div>
+            </label>
+          </div>
+          <div class="nominee-card" [class.nominee-card-active]="educationForm.get('isScale')?.value">
+            <label class="nominee-toggle-row">
+              <div class="toggle-wrap">
+                <input type="checkbox" formControlName="isScale" class="toggle-input" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </div>
+              <div class="toggle-text-block">
+                <span class="toggle-label-main">Is Scale</span>
+                <span class="toggle-label-sub">Applicable for scale computation</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+          <button type="submit" class="btn-save-primary" [disabled]="isEducationSaving">
+            @if (isEducationSaving) { <span class="spin-xs"></span> Saving… }
+            @else { {{ editingEducationId !== null ? 'Update Education' : 'Add Education' }} }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

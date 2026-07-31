@@ -1,0 +1,311 @@
+/* ── Page wrapper ─────────────────────────────────────────────────────────── */
+.se-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+/* ── Decorative blobs ─────────────────────────────────────────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.blob-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #fff7ed 0%, transparent 70%);
+  top: -100px;
+  right: -80px;
+  opacity: 0.9;
+}
+.blob-2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #fde8d8 0%, transparent 70%);
+  bottom: -80px;
+  left: -80px;
+  opacity: 0.6;
+}
+
+/* ── Dot grid ─────────────────────────────────────────────────────────────── */
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#e5e7eb 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.se-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 48px 40px 36px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  box-shadow:
+    0 4px 6px -1px rgba(0,0,0,0.04),
+    0 10px 40px -8px rgba(249,115,22,0.10),
+    0 0 0 1px rgba(249,115,22,0.04);
+  animation: card-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── SVG illustration ─────────────────────────────────────────────────────── */
+.se-illustration {
+  margin: 0 auto 4px;
+  width: 240px;
+  animation: float 4s ease-in-out infinite;
+}
+.se-illustration svg { width: 100%; height: auto; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-7px); }
+}
+
+/* Blinking status LEDs */
+.blink {
+  animation: blink-red 1.2s step-start infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.blink-slow {
+  animation: blink-orange 1.8s step-start infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes blink-red    { 0%,100% { opacity:1; } 50% { opacity:0.15; } }
+@keyframes blink-orange { 0%,49%  { opacity:1; } 50%,100% { opacity:0.2; } }
+
+/* Floating sparks */
+.spark-a { animation: spark-a 2.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.spark-b { animation: spark-b 3.1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.spark-c { animation: spark-c 2.0s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+@keyframes spark-a { 0%,100% { transform: translateY(0) rotate(0deg);   opacity: 0.5; } 50% { transform: translateY(-6px) rotate(12deg);  opacity: 0.9; } }
+@keyframes spark-b { 0%,100% { transform: translateY(0) rotate(0deg);   opacity: 0.4; } 50% { transform: translateY(5px)  rotate(-10deg); opacity: 0.8; } }
+@keyframes spark-c { 0%,100% { transform: translateY(0) scale(1);       opacity: 0.5; } 50% { transform: translateY(-4px) scale(1.3);     opacity: 0.9; } }
+
+/* ── 500 code ─────────────────────────────────────────────────────────────── */
+.se-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 10px;
+  line-height: 1;
+}
+
+.code-5, .code-0, .code-0b {
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: -4px;
+}
+
+.code-5 {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pop-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.code-0 {
+  color: #111827;
+  animation: pop-in 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.code-0b {
+  background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: pop-in 0.5s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.5) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0);    }
+}
+
+/* ── Badge ────────────────────────────────────────────────────────────────── */
+.se-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  border-radius: 99px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  animation: fade-up 0.4s 0.32s ease both;
+}
+
+/* ── Heading & description ────────────────────────────────────────────────── */
+.se-title {
+  margin: 0 0 10px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  animation: fade-up 0.4s 0.38s ease both;
+}
+
+.se-desc {
+  margin: 0 0 28px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.65;
+  animation: fade-up 0.4s 0.44s ease both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Action buttons ───────────────────────────────────────────────────────── */
+.se-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  animation: fade-up 0.4s 0.5s ease both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(249,115,22,0.32);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  box-shadow: 0 6px 20px rgba(249,115,22,0.42);
+  transform: translateY(-2px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  background: transparent;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.15s;
+  font-family: inherit;
+}
+.btn-ghost:hover {
+  border-color: #6d28d9;
+  color: #6d28d9;
+  background: #f5f3ff;
+  transform: translateY(-2px);
+}
+.btn-ghost:active { transform: translateY(0); }
+
+/* ── Status indicator ─────────────────────────────────────────────────────── */
+.se-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  margin-bottom: 16px;
+  animation: fade-up 0.4s 0.56s ease both;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-red {
+  background: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+  animation: pulse-red 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+  50%       { box-shadow: 0 0 0 5px rgba(220,38,38,0);  }
+}
+
+.status-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+/* ── Footer hint ──────────────────────────────────────────────────────────── */
+.se-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  letter-spacing: 0.3px;
+  animation: fade-up 0.4s 0.62s ease both;
+}
+.se-hint strong { color: #6b7280; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .se-card {
+    padding: 36px 24px 28px;
+    border-radius: 16px;
+  }
+  .code-5, .code-0, .code-0b {
+    font-size: 4.5rem;
+  }
+  .se-illustration {
+    width: 190px;
+  }
+  .se-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-primary, .btn-ghost {
+    justify-content: center;
+  }
+}

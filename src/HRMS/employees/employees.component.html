@@ -1,0 +1,390 @@
+<div class="employees-container">
+
+  @if (openDropdown) {
+    <div class="dropdown-backdrop" (click)="closeDropdown()"></div>
+  }
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-title">
+      <div class="title-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Employees</h1>
+        @if (totalRecords > 0) {
+          <span class="page-subtitle">{{ totalRecords }} total</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Inline Filter Row ──────────────────────────────────────────────── -->
+  <div class="filter-row">
+
+    <!-- Search -->
+    <div class="fr-field fr-field-search">
+      <span class="fr-lbl">Search</span>
+      <div class="fr-search-ctrl" [class.focused]="searchQuery">
+        <svg class="fr-search-ico" xmlns="http://www.w3.org/2000/svg" width="13" height="13"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="fr-search-input" placeholder="Name or Emp ID..."
+               [(ngModel)]="searchQuery" (keydown.enter)="applyFilters()"
+               autocomplete="off" spellcheck="false" />
+        @if (searchQuery) {
+          <button class="fr-x" (click)="searchQuery=''">&#x2715;</button>
+        }
+      </div>
+    </div>
+
+    <!-- Gender -->
+    <div class="fr-field" [class.fr-active]="genderFilter !== null">
+      <span class="fr-lbl">Gender</span>
+      <div class="fr-sel" [class.open]="openDropdown === 'gender'">
+        <div class="fr-trigger" (click)="toggleDropdown('gender')">
+          <span class="fr-val" [class.fr-placeholder]="genderFilter === null">
+            {{ genderFilter !== null ? (genderFilterName | titlecase) : 'Select Gender' }}
+          </span>
+          @if (genderFilter !== null) {
+            <button class="fr-clear-x" (click)="$event.stopPropagation(); setFilter('gender', null)">&#x2715;</button>
+          } @else {
+            <svg class="fr-chev" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          }
+        </div>
+        @if (openDropdown === 'gender') {
+          <div class="fr-panel">
+            <div class="fr-panel-search">
+              <div class="fr-ps-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search..." [(ngModel)]="genderSearch" autocomplete="off" />
+              </div>
+            </div>
+            <div class="fr-opts">
+              @if (filteredGenderOptions.length === 0) {
+                <div class="fr-empty">No results</div>
+              } @else {
+                @for (g of filteredGenderOptions; track g.genderId) {
+                  <div class="fr-opt" [class.sel]="genderFilter === g.genderId"
+                       (click)="setFilter('gender', g.genderId)">
+                    {{ g.genderName | titlecase }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Employment Type -->
+    <div class="fr-field" [class.fr-active]="employmentFilter !== null">
+      <span class="fr-lbl">Emp. Type</span>
+      <div class="fr-sel" [class.open]="openDropdown === 'employment'">
+        <div class="fr-trigger" (click)="toggleDropdown('employment')">
+          <span class="fr-val" [class.fr-placeholder]="employmentFilter === null">
+            {{ employmentFilter !== null ? (employmentFilterName | titlecase) : 'Select Type' }}
+          </span>
+          @if (employmentFilter !== null) {
+            <button class="fr-clear-x" (click)="$event.stopPropagation(); setFilter('employment', null)">&#x2715;</button>
+          } @else {
+            <svg class="fr-chev" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          }
+        </div>
+        @if (openDropdown === 'employment') {
+          <div class="fr-panel">
+            <div class="fr-panel-search">
+              <div class="fr-ps-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search..." [(ngModel)]="employmentSearch" autocomplete="off" />
+              </div>
+            </div>
+            <div class="fr-opts">
+              @if (filteredEmploymentOptions.length === 0) {
+                <div class="fr-empty">No results</div>
+              } @else {
+                @for (e of filteredEmploymentOptions; track e.employmentId) {
+                  <div class="fr-opt" [class.sel]="employmentFilter === e.employmentId"
+                       (click)="setFilter('employment', e.employmentId)">
+                    {{ e.employmentName | titlecase }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Division -->
+    <div class="fr-field" [class.fr-active]="buFilter !== null">
+      <span class="fr-lbl">Division</span>
+      <div class="fr-sel" [class.open]="openDropdown === 'bu'">
+        <div class="fr-trigger" (click)="toggleDropdown('bu')">
+          <span class="fr-val" [class.fr-placeholder]="buFilter === null">
+            {{ buFilter !== null ? (buFilterName | titlecase) : 'Select Division' }}
+          </span>
+          @if (buFilter !== null) {
+            <button class="fr-clear-x" (click)="$event.stopPropagation(); setFilter('bu', null)">&#x2715;</button>
+          } @else {
+            <svg class="fr-chev" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          }
+        </div>
+        @if (openDropdown === 'bu') {
+          <div class="fr-panel">
+            <div class="fr-panel-search">
+              <div class="fr-ps-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search..." [(ngModel)]="buSearch" autocomplete="off" />
+              </div>
+            </div>
+            <div class="fr-opts">
+              @if (filteredBuOptions.length === 0) {
+                <div class="fr-empty">No results</div>
+              } @else {
+                @for (b of filteredBuOptions; track b.divisionId) {
+                  <div class="fr-opt" [class.sel]="buFilter === b.divisionId"
+                       (click)="setFilter('bu', b.divisionId)">
+                    {{ b.divisionName | titlecase }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Department -->
+    <div class="fr-field" [class.fr-active]="deptFilter !== null">
+      <span class="fr-lbl">Department</span>
+      <div class="fr-sel" [class.open]="openDropdown === 'dept'">
+        <div class="fr-trigger" (click)="toggleDropdown('dept')">
+          <span class="fr-val" [class.fr-placeholder]="deptFilter === null">
+            {{ deptFilter !== null ? (deptFilterName | titlecase) : 'Select Dept.' }}
+          </span>
+          @if (deptFilter !== null) {
+            <button class="fr-clear-x" (click)="$event.stopPropagation(); setFilter('dept', null)">&#x2715;</button>
+          } @else {
+            <svg class="fr-chev" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          }
+        </div>
+        @if (openDropdown === 'dept') {
+          <div class="fr-panel">
+            <div class="fr-panel-search">
+              <div class="fr-ps-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search..." [(ngModel)]="deptSearch" autocomplete="off" />
+              </div>
+            </div>
+            <div class="fr-opts">
+              @if (filteredDeptOptions.length === 0) {
+                <div class="fr-empty">No results</div>
+              } @else {
+                @for (d of filteredDeptOptions; track d.deptId) {
+                  <div class="fr-opt" [class.sel]="deptFilter === d.deptId"
+                       (click)="setFilter('dept', d.deptId)">
+                    {{ d.deptName | titlecase }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="fr-field" [class.fr-active]="statusFilter !== null">
+      <span class="fr-lbl">Status</span>
+      <div class="fr-sel" [class.open]="openDropdown === 'status'">
+        <div class="fr-trigger" (click)="toggleDropdown('status')">
+          <span class="fr-val" [class.fr-placeholder]="statusFilter === null">
+            {{ statusFilter !== null ? (statusFilterName | titlecase) : 'Select Status' }}
+          </span>
+          @if (statusFilter !== null) {
+            <button class="fr-clear-x" (click)="$event.stopPropagation(); setFilter('status', null)">&#x2715;</button>
+          } @else {
+            <svg class="fr-chev" xmlns="http://www.w3.org/2000/svg" width="11" height="11"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          }
+        </div>
+        @if (openDropdown === 'status') {
+          <div class="fr-panel">
+            <div class="fr-panel-search">
+              <div class="fr-ps-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" placeholder="Search..." [(ngModel)]="statusSearch" autocomplete="off" />
+              </div>
+            </div>
+            <div class="fr-opts">
+              @if (filteredStatusOptions.length === 0) {
+                <div class="fr-empty">No results</div>
+              } @else {
+                @for (s of filteredStatusOptions; track s.statusId) {
+                  <div class="fr-opt" [class.sel]="statusFilter === s.statusId"
+                       (click)="setFilter('status', s.statusId)">
+                    {{ s.statusName | titlecase }}
+                  </div>
+                }
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="fr-field fr-field-actions">
+      <span class="fr-lbl">&nbsp;</span>
+      <div class="fr-actions">
+        <button class="fr-apply-btn" (click)="applyFilters()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Apply
+        </button>
+        <button class="fr-clearall-btn" (click)="clearAllFilters()"
+                [disabled]="!hasActiveFilters() && !searchQuery" title="Clear all filters">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- end filter-row -->
+
+  <!-- Table + Pagination card -->
+  <div class="table-card">
+    <div class="table-responsive">
+      <table class="emp-table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            @for (col of tableColumns; track col) {
+              @if (col !== 'Full Name') {
+                <th>{{ col }}</th>
+              }
+            }
+            @if (tableColumns.length === 0) {
+              <th>Gender</th><th>Date Of Birth</th><th>Date Of Join</th>
+              <th>Employment Type</th><th>Designation</th><th>Department</th><th>Status</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @if (isLoading) {
+            <tr>
+              <td [attr.colspan]="(tableColumns.length || 8)" class="no-data">
+                <div class="no-data-inner">
+                  <span class="loading-dot"></span>
+                  <span class="loading-dot"></span>
+                  <span class="loading-dot"></span>
+                  <p>Loading employees...</p>
+                </div>
+              </td>
+            </tr>
+          } @else {
+            @for (emp of rawEmployees; track $index; let i = $index) {
+              <tr class="emp-row" (click)="viewEmployee(emp)">
+                <td class="td-name">
+                  <div class="emp-avatar" [style.background-color]="getAvatarColor(i)">
+                    <span>{{ getInitials(emp['Full Name']) }}</span>
+                    @if (emp['Pic']) {
+                      <img [src]="emp['Pic']" class="avatar-img"
+                           (error)="$any($event.target).style.display='none'">
+                    }
+                  </div>
+                  <div class="name-info">
+                    <span class="emp-fullname">{{ emp['Full Name'] | titlecase }}</span>
+                    <span class="emp-id-sub">{{ emp['Emp ID'] }}</span>
+                  </div>
+                </td>
+                @for (col of tableColumns; track col) {
+                  @if (col !== 'Full Name') {
+                    @if (col === 'Status') {
+                      <td>
+                        <span class="status-badge"
+                              [class.badge-active]="emp[col] === 'ACTIVE'"
+                              [class.badge-inactive]="emp[col] !== 'ACTIVE'">
+                          <span class="badge-dot"></span>{{ emp[col] | titlecase }}
+                        </span>
+                      </td>
+                    } @else {
+                      <td>{{ emp[col] | titlecase }}</td>
+                    }
+                  }
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="(tableColumns.length || 8)" class="no-data">
+                  <div class="no-data-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24"
+                         fill="none" stroke="#d1d5db" stroke-width="1.5">
+                      <circle cx="11" cy="11" r="8"/>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <p>No employees found</p>
+                    <button class="btn-link" (click)="clearAllFilters()">Clear filters</button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar">
+      <span class="showing-info">{{ showingText }}</span>
+      <div class="page-num-scroll">
+        @for (page of allPageNumbers; track page) {
+          <button class="pn-btn" [class.pn-active]="page === currentPage"
+                  (click)="goToPage(page)">{{ page }}</button>
+        }
+      </div>
+    </div>
+  </div><!-- end .table-card -->
+
+</div>

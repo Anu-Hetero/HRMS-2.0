@@ -1,0 +1,66 @@
+<!-- Breadcrumb -->
+<div class="breadcrumb">
+  <button class="back-link" (click)="goBack.emit()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    Employees
+  </button>
+  <span class="breadcrumb-sep">›</span>
+  <span class="breadcrumb-cur">Details</span>
+</div>
+
+<!-- New Employee Header -->
+@if (isNew) {
+  <div class="new-emp-header">
+    <div class="new-emp-title-row">
+      <div class="emp-avatar-lg new-emp-avatar">NE</div>
+      <div>
+        <h2>Add New Employee</h2>
+        <p class="new-emp-sub">Fill in all sections below and click Save to create the employee record</p>
+      </div>
+    </div>
+    <button class="btn-save-employee" (click)="saveNewEmployee.emit()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Employee
+    </button>
+  </div>
+  <form [formGroup]="newEmpBasicForm" class="section-card new-basic-form">
+    <div class="section-header"><h4>Basic Information <span class="req">*</span></h4></div>
+    <div class="field-grid edit-grid">
+      <div class="field-edit"><label>Full Name <span class="req">*</span></label><input type="text" formControlName="fullName" placeholder="e.g. Rahul Sharma" [class.error-input]="newEmpBasicForm.get('fullName')?.invalid && newEmpBasicForm.get('fullName')?.touched" />@if (newEmpBasicForm.get('fullName')?.errors?.['required'] && newEmpBasicForm.get('fullName')?.touched) { <span class="err">Full name is required</span> }</div>
+      <div class="field-edit"><label>Employee ID</label><input type="text" formControlName="empId" placeholder="e.g. EM004" /></div>
+      <div class="field-edit"><label>Gender <span class="req">*</span></label><select formControlName="gender" [class.error-input]="newEmpBasicForm.get('gender')?.invalid && newEmpBasicForm.get('gender')?.touched"><option value="">Select gender</option>@for (o of genderOptions; track o) { <option [value]="o">{{ o }}</option> }</select>@if (newEmpBasicForm.get('gender')?.errors?.['required'] && newEmpBasicForm.get('gender')?.touched) { <span class="err">Gender is required</span> }</div>
+      <div class="field-edit"><label>Date of Birth <span class="req">*</span></label><input type="date" formControlName="dob" [class.error-input]="newEmpBasicForm.get('dob')?.invalid && newEmpBasicForm.get('dob')?.touched" />@if (newEmpBasicForm.get('dob')?.errors?.['required'] && newEmpBasicForm.get('dob')?.touched) { <span class="err">Date of birth is required</span> }</div>
+      <div class="field-edit"><label>Date of Joining <span class="req">*</span></label><input type="date" formControlName="doj" [class.error-input]="newEmpBasicForm.get('doj')?.invalid && newEmpBasicForm.get('doj')?.touched" />@if (newEmpBasicForm.get('doj')?.errors?.['required'] && newEmpBasicForm.get('doj')?.touched) { <span class="err">Date of joining is required</span> }</div>
+      <div class="field-edit"><label>Employment Type <span class="req">*</span></label><select formControlName="employmentType" [class.error-input]="newEmpBasicForm.get('employmentType')?.invalid && newEmpBasicForm.get('employmentType')?.touched"><option value="">Select type</option>@for (o of employmentTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (newEmpBasicForm.get('employmentType')?.errors?.['required'] && newEmpBasicForm.get('employmentType')?.touched) { <span class="err">Employment type is required</span> }</div>
+      <div class="field-edit"><label>Designation <span class="req">*</span></label><select formControlName="designation" [class.error-input]="newEmpBasicForm.get('designation')?.invalid && newEmpBasicForm.get('designation')?.touched"><option value="">Select designation</option>@for (o of designationOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (newEmpBasicForm.get('designation')?.errors?.['required'] && newEmpBasicForm.get('designation')?.touched) { <span class="err">Designation is required</span> }</div>
+      <div class="field-edit"><label>Department <span class="req">*</span></label><select formControlName="department" [class.error-input]="newEmpBasicForm.get('department')?.invalid && newEmpBasicForm.get('department')?.touched"><option value="">Select department</option>@for (o of departmentOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (newEmpBasicForm.get('department')?.errors?.['required'] && newEmpBasicForm.get('department')?.touched) { <span class="err">Department is required</span> }</div>
+      <div class="field-edit"><label>Status <span class="req">*</span></label><select formControlName="status"><option value="Active">Active</option><option value="In-Active">In-Active</option></select></div>
+    </div>
+  </form>
+}
+
+<!-- Existing Employee Header -->
+@if (!isNew && employee) {
+  <div class="emp-header">
+    @if (employee.picture) {
+      <img [src]="employee.picture" class="emp-avatar-lg emp-avatar-img" alt="Profile" />
+    } @else {
+      <div class="emp-avatar-lg" [style.background-color]="employee.avatarColor">{{ employee.initials }}</div>
+    }
+    <div class="emp-header-info">
+      <div class="name-row">
+        <h2>{{ employee.fullName || employee.empId }}</h2>
+        <span class="status-badge" [class.badge-active]="employee.status === 'Active'" [class.badge-inactive]="employee.status === 'In-Active'">
+          <span class="badge-dot"></span>{{ employee.status }}
+        </span>
+      </div>
+      <div class="emp-meta">
+        <span class="meta-id">#{{ employee.empId }}</span>
+        <span class="sep">●</span><span>{{ employee.designation }}</span>
+        <span class="sep">●</span><span>{{ employee.department }}</span>
+        <span class="sep">●</span><span>{{ employee.employmentType }}</span>
+        <span class="sep">●</span><span>{{ employee.doj }}</span>
+      </div>
+    </div>
+  </div>
+}

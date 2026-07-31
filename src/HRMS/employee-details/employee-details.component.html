@@ -1,0 +1,322 @@
+<div class="details-page">
+
+  <app-emp-header
+    [employee]="employee"
+    [isNew]="isNew"
+    [newEmpBasicForm]="newEmpBasicForm"
+    [genderOptions]="genderOptions"
+    [employmentTypeOpts]="employmentTypeOpts"
+    [designationOpts]="designationOpts"
+    [departmentOpts]="departmentOpts"
+    (goBack)="goBack()"
+    (saveNewEmployee)="saveNewEmployee()">
+  </app-emp-header>
+
+  @if (employee) {
+
+    <!-- ─── Tab Navigation ─── -->
+    <div class="tab-nav-wrapper">
+      <div class="tab-nav">
+        @for (tab of tabs; track tab.id) {
+          <button class="tab-btn" [class.active]="activeTab === tab.id" (click)="setActiveTab(tab.id)">{{ tab.label }}</button>
+        }
+      </div>
+    </div>
+
+    <!-- ══ Contact ══ -->
+    @if (activeTab === 'contact') {
+      <app-contact-tab
+        [contactData]="contactData"
+        [editing]="editing"
+        [isNew]="isNew"
+        [profContactForm]="profContactForm"
+        [persContactForm]="persContactForm"
+        [permAddressForm]="permAddressForm"
+        [iceForm]="iceForm"
+        [countries]="countries"
+        [sectionStates]="sectionStates"
+        [sectionCities]="sectionCities"
+        [contactSearch]="contactSearch"
+        [contactDropdownOpen]="contactDropdownOpen"
+        [relations]="relations"
+        (startEdit)="startEdit($event)"
+        (cancelEdit)="cancelEdit($event)"
+        (saveProfContact)="saveProfContact()"
+        (savePersContact)="savePersContact()"
+        (savePermAddress)="savePermAddress()"
+        (saveIce)="saveIce()"
+        (selectCountry)="selectCountry($event.section, $event.country, $event.form)"
+        (selectState)="selectState($event.section, $event.state, $event.form)"
+        (selectCity)="selectCity($event.section, $event.city, $event.form)"
+        (clearContactField)="clearContactField($event.section, $any($event.field), $event.form)"
+        (sameAsCurrentChange)="onSameAsCurrentChange()"
+        (iceAddressModeChange)="onIceAddressModeChange()">
+      </app-contact-tab>
+    }
+
+    <!-- ══ Personal ══ -->
+    @if (activeTab === 'personal') {
+      <app-personal-tab
+        [personalData]="personalData"
+        [editing]="editing"
+        [isNew]="isNew"
+        [personalProfForm]="personalProfForm"
+        [prevPFForm]="prevPFForm"
+        [nativeForm]="nativeForm"
+        [healthForm]="healthForm"
+        [idMarksForm]="idMarksForm"
+        [languageList]="personalData.languageList"
+        [maritalStatuses]="maritalStatuses"
+        [nationalities]="nationalities"
+        [religions]="religions"
+        [bloodGroups]="bloodGroups"
+        [languages]="languages"
+        [countries]="countries"
+        [nativeStates]="sectionStates['native']"
+        [nativeCities]="sectionCities['native']"
+        [dobTypes]="dobTypes"
+        (startEdit)="startEdit($event)"
+        (cancelEdit)="cancelEdit($event)"
+        (savePersonalProf)="savePersonalProf()"
+        (savePrevPF)="savePrevPF()"
+        (saveNative)="saveNative()"
+        (saveHealth)="saveHealth()"
+        (saveIdMarks)="saveIdMarks()"
+        (addLanguage)="addLanguage($event)"
+        (deleteLanguage)="deleteLanguage($event)"
+        (nativeCountrySelected)="selectNativeCountry($event)"
+        (nativeStateSelected)="selectNativeState($event)"
+        (nativeCitySelected)="selectNativeCity($event)"
+        (clearNativeCountryEvent)="clearNativeCountry()"
+        (clearNativeStateEvent)="clearNativeState()">
+      </app-personal-tab>
+    }
+
+    <!-- ══ Family ══ -->
+    @if (activeTab === 'family') {
+      <app-family-tab
+        [familyMembers]="familyMembers"
+        [deletingFamilyId]="deletingFamilyId"
+        [showFamilyModal]="showFamilyModal"
+        [editingFamilyMemberId]="editingFamilyMemberId"
+        [familyMemberForm]="familyMemberForm"
+        [isFamilySaving]="isFamilySaving"
+        [familySaveError]="familySaveError"
+        [relationOptions]="relationOptions"
+        [bloodGroups]="bloodGroups"
+        [genderOptions]="genderOptions"
+        [empSubtitle]="empSubtitle"
+        (addFamily)="openAddFamily()"
+        (editMember)="editFamilyMember($event)"
+        (toggleStatus)="toggleFamilyStatus($event)"
+        (closeModal)="closeFamilyModal()"
+        (saveMember)="saveFamilyMember()">
+      </app-family-tab>
+    }
+
+    <!-- ══ Education ══ -->
+    @if (activeTab === 'education') {
+      <app-education-tab
+        [educationRecords]="educationRecords"
+        [deletingEducationId]="deletingEducationId"
+        [showEducationModal]="showEducationModal"
+        [editingEducationId]="editingEducationId"
+        [educationForm]="educationForm"
+        [isEducationSaving]="isEducationSaving"
+        [educationSaveError]="educationSaveError"
+        [qualifications]="qualifications"
+        [educationBranches]="educationBranches"
+        [isLoadingBranches]="isLoadingBranches"
+        [showBranchHint]="showBranchHint"
+        [universities]="universities"
+        [educationTypes]="educationTypes"
+        [qualificationSearch]="qualificationSearch"
+        [universitySearch]="universitySearch"
+        [empSubtitle]="empSubtitle"
+        (addEducation)="openAddEducation()"
+        (editRecord)="editEducation($event)"
+        (toggleStatus)="toggleEducationStatus($event)"
+        (closeModal)="closeEducationModal()"
+        (saveRecord)="saveEducation()"
+        (qualificationInput)="onQualificationInput($event)"
+        (qualificationSelected)="selectQualification($event)"
+        (qualificationCleared)="clearQualification()"
+        (qualificationDropdownHide)="hideQualificationDropdownSoon()"
+        (universityInput)="onUniversityInput($event)"
+        (universitySelected)="selectUniversity($event)"
+        (universityCleared)="clearUniversity()"
+        (universityDropdownHide)="hideUniversityDropdownSoon()">
+      </app-education-tab>
+    }
+
+    <!-- ══ Experience ══ -->
+    @if (activeTab === 'experience') {
+      <app-experience-tab
+        [experienceRecords]="experienceRecords"
+        [deletingExperienceId]="deletingExperienceId"
+        [showExperienceModal]="showExperienceModal"
+        [editingExperienceId]="editingExperienceId"
+        [experienceForm]="experienceForm"
+        [isExperienceSaving]="isExperienceSaving"
+        [experienceSaveError]="experienceSaveError"
+        [qualifications]="qualifications"
+        [expBranches]="expBranches"
+        [isLoadingExpBranches]="isLoadingExpBranches"
+        [showExpBranchHint]="showExpBranchHint"
+        [industryTypes]="industryTypes"
+        [functionalAreas]="functionalAreas"
+        [expQualificationSearch]="expQualificationSearch"
+        [industryTypeSearch]="industryTypeSearch"
+        [functionalAreaSearch]="functionalAreaSearch"
+        [isCurrentlyWorking]="isCurrentlyWorking"
+        [expDateOrderWarning]="expDateOrderWarning"
+        [experienceCalcMonths]="experienceCalcMonths"
+        [empSubtitle]="empSubtitle"
+        (addExperience)="openAddExperience()"
+        (editRecord)="editExperience($event)"
+        (toggleStatus)="toggleExperienceStatus($event)"
+        (closeModal)="closeExperienceModal()"
+        (saveRecord)="saveExperience()"
+        (expQualificationInput)="onExpQualificationInput($event)"
+        (expQualificationSelected)="selectExpQualification($event)"
+        (expQualificationCleared)="clearExpQualification()"
+        (expQualificationDropdownHide)="hideExpQualificationDropdown()"
+        (industryTypeInput)="onIndustryTypeInput($event)"
+        (industryTypeSelected)="selectIndustryType($event)"
+        (industryTypeCleared)="clearIndustryType()"
+        (industryTypeDropdownHide)="hideIndustryTypeDropdown()"
+        (functionalAreaInput)="onFunctionalAreaInput($event)"
+        (functionalAreaSelected)="selectFunctionalArea($event)"
+        (functionalAreaCleared)="clearFunctionalArea()"
+        (functionalAreaDropdownHide)="hideFunctionalAreaDropdown()"
+        (toggleCurrentlyWorking)="toggleCurrentlyWorking($event)"
+        (relevanceToggle)="experienceForm.patchValue({ isExperienceRelevant: $event ? 1 : 0 })">
+      </app-experience-tab>
+    }
+
+    <!-- ══ References ══ -->
+    @if (activeTab === 'references') {
+      <app-references-tab
+        [referenceRecords]="referenceRecords"
+        [showReferenceModal]="showReferenceModal"
+        [editingReferenceId]="editingReferenceId"
+        [referenceForm]="referenceForm"
+        [referenceTypeOpts]="referenceTypeOpts"
+        [locationOpts]="locationOpts"
+        [empSubtitle]="empSubtitle"
+        (addReference)="openAddReference()"
+        (editRecord)="editReference($event)"
+        (closeModal)="closeReferenceModal()"
+        (saveRecord)="saveReference()">
+      </app-references-tab>
+    }
+
+    <!-- ══ CTC ══ -->
+    @if (activeTab === 'ctc') {
+      <app-ctc-tab
+        [ctcData]="ctcData"
+        [newCtcForm]="newCtcForm"
+        [isNew]="isNew"
+        [financialYearOpts]="financialYearOpts"
+        [payStructureOpts]="payStructureOpts"
+        [statusTypeOpts]="statusTypeOpts"
+        [actionTypeOpts]="actionTypeOpts"
+        (saveNewCtc)="saveNewCtc()">
+      </app-ctc-tab>
+    }
+
+    <!-- ══ Professional ══ -->
+    @if (activeTab === 'professional') {
+      <app-professional-tab
+        [professionalData]="professionalData"
+        [editing]="editing"
+        [isNew]="isNew"
+        [profProfForm]="profProfForm"
+        [workLocationForm]="workLocationForm"
+        [reportingOfficerForm]="reportingOfficerForm"
+        [profileForm]="profileForm"
+        [expLevelForm]="expLevelForm"
+        [departmentOpts]="departmentOpts"
+        [sectionOpts]="sectionOpts"
+        [designationOpts]="designationOpts"
+        [paysheetGroupOpts]="paysheetGroupOpts"
+        [headQuarterOpts]="headQuarterOpts"
+        [regionOpts]="regionOpts"
+        [termsOfServiceOpts]="termsOfServiceOpts"
+        [expLevelOpts]="expLevelOpts"
+        [incrementTypeOpts]="incrementTypeOpts"
+        (startEdit)="startEdit($event)"
+        (cancelEdit)="cancelEdit($event)"
+        (saveProfProf)="saveProfProf()"
+        (saveWorkLocation)="saveWorkLocation()"
+        (saveReportingOfficer)="saveReportingOfficer()"
+        (saveProfProfile)="saveProfProfile()"
+        (saveExpLevel)="saveExpLevel()">
+      </app-professional-tab>
+    }
+
+    <!-- ══ Profile (placeholder) ══ -->
+    @if (activeTab === 'profile') {
+      <div class="tab-content">
+        <div class="placeholder-section">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <h4>Profile</h4>
+          <p>This section will be available soon.</p>
+        </div>
+      </div>
+    }
+
+    <!-- ══ Transfers ══ -->
+    @if (activeTab === 'transfers') {
+      <app-transfers-tab
+        [transferRecords]="transferRecords"
+        [showTransferModal]="showTransferModal"
+        [editingTransferId]="editingTransferId"
+        [transferStep]="transferStep"
+        [transferForm]="transferForm"
+        [transferActionForm]="transferActionForm"
+        [transferTypeOpts]="transferTypeOpts"
+        [transferDetailsOpts]="transferDetailsOpts"
+        [businessUnitOpts]="businessUnitOpts"
+        [costCentreOpts]="costCentreOpts"
+        [departmentOpts]="departmentOpts"
+        [sectionOpts]="sectionOpts"
+        [designationOpts]="designationOpts"
+        [headQuarterOpts]="headQuarterOpts"
+        [reportingDateTimeOpts]="reportingDateTimeOpts"
+        [paysheetGroupOpts]="paysheetGroupOpts"
+        [payStructureOpts]="payStructureOpts"
+        [actionTypeOpts]="actionTypeOpts"
+        [documentSourceOpts]="documentSourceOpts"
+        [transferStatusOpts]="transferStatusOpts"
+        [empSubtitle]="empSubtitle"
+        (addTransfer)="openAddTransfer()"
+        (editRecord)="editTransfer($event)"
+        (closeModal)="closeTransferModal()"
+        (continueToActionDetails)="continueToActionDetails()"
+        (goBackToStep)="goBackToTransferStep()"
+        (saveTransfer)="saveTransferDetails()">
+      </app-transfers-tab>
+    }
+
+    <!-- ══ HR Actions ══ -->
+    @if (activeTab === 'hr-actions') {
+      <app-hr-actions-tab
+        [hrActionRecords]="hrActionRecords"
+        [showHrActionModal]="showHrActionModal"
+        [editingHrActionId]="editingHrActionId"
+        [hrActionForm]="hrActionForm"
+        [hrActionCategoryOpts]="hrActionCategoryOpts"
+        [empSubtitle]="empSubtitle"
+        (addHrAction)="openAddHrAction()"
+        (editRecord)="editHrAction($event)"
+        (closeModal)="closeHrActionModal()"
+        (saveRecord)="saveHrAction()">
+      </app-hr-actions-tab>
+    }
+
+  } @else {
+    <div class="loading-state"><div class="spinner"></div><p>Loading employee details...</p></div>
+  }
+
+</div>

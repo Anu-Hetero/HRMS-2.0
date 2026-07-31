@@ -1,0 +1,101 @@
+<div class="tab-content">
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">HR Actions</h3>
+      <button class="btn-add" (click)="addHrAction.emit()">+ Add New Action</button>
+    </div>
+    <div class="table-wrapper">
+      <table class="family-table">
+        <thead>
+          <tr>
+            <th>S.No</th><th>Category</th><th>Action Considered By</th><th>Employee ID</th>
+            <th>Action Considered Date</th><th>Notes</th><th>Last Working Day</th>
+            <th>Status</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rec of hrActionRecords; track rec.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ rec.category }}</td>
+              <td>{{ rec.actionConsideredBy }}</td>
+              <td>{{ rec.employeeId }}</td>
+              <td>{{ rec.actionConsideredDate }}</td>
+              <td>{{ rec.notes }}</td>
+              <td>{{ rec.lastWorkingDay }}</td>
+              <td><span class="status-badge" [class.active]="rec.status === 'Active'">{{ rec.status }}</span></td>
+              <td><button class="btn-icon-edit" (click)="editRecord.emit(rec)">✎</button></td>
+            </tr>
+          }
+          @empty {
+            <tr><td colspan="9" class="empty-row">No HR action records. Click "+ Add New Action" to add one.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ HR ACTION MODAL ══════════════ -->
+@if (showHrActionModal) {
+  <div class="modal-overlay" (click)="closeModal.emit()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>@if (editingHrActionId !== null) { Edit HR Action } @else { Add New Action }</h3>
+          <div class="modal-subtitle">{{ empSubtitle }}</div>
+        </div>
+        <button class="modal-close" (click)="closeModal.emit()">×</button>
+      </div>
+      <form [formGroup]="hrActionForm" (ngSubmit)="saveRecord.emit()" class="modal-body">
+        <div class="field-grid edit-grid">
+          <div class="field-edit col-span-2">
+            <label>Category <span class="req">*</span></label>
+            <select formControlName="category" [class.error-input]="isInvalid(hrActionForm,'category')">
+              <option value="">Select</option>
+              @for (o of hrActionCategoryOpts; track o) { <option [value]="o">{{ o }}</option> }
+            </select>
+            @if (fieldError(hrActionForm,'category','required')) { <span class="err">Required</span> }
+          </div>
+          <div class="field-edit">
+            <label>Action Considered By <span class="req">*</span></label>
+            <input type="text" formControlName="actionConsideredBy"
+                   [class.error-input]="isInvalid(hrActionForm,'actionConsideredBy')" />
+            @if (fieldError(hrActionForm,'actionConsideredBy','required')) { <span class="err">Required</span> }
+          </div>
+          <div class="field-edit">
+            <label>Employee ID</label>
+            <input type="text" formControlName="employeeId" />
+          </div>
+          <div class="field-edit">
+            <label>Action Considered Date <span class="req">*</span></label>
+            <input type="date" formControlName="actionConsideredDate"
+                   [class.error-input]="isInvalid(hrActionForm,'actionConsideredDate')" />
+            @if (fieldError(hrActionForm,'actionConsideredDate','required')) { <span class="err">Required</span> }
+          </div>
+          <div class="field-edit">
+            <label>Last Working Day</label>
+            <input type="date" formControlName="lastWorkingDay" />
+          </div>
+          <div class="field-edit col-span-2">
+            <label>Notes</label>
+            <textarea formControlName="notes" rows="2"></textarea>
+          </div>
+          <div class="field-edit">
+            <label>Status <span class="req">*</span></label>
+            <select formControlName="status">
+              <option value="Active">Active</option>
+              <option value="In-Active">In-Active</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+          <button type="submit" class="btn-save-primary">
+            {{ editingHrActionId !== null ? 'Save' : 'Save Action' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

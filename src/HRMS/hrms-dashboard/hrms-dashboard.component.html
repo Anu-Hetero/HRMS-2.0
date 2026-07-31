@@ -1,0 +1,188 @@
+<div class="hd-page">
+
+  <!-- ─── Header ─── -->
+  <div class="hd-header">
+    <div class="hd-title">
+      <div class="hd-title-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+      </div>
+      <div>
+        <h1>HRMS Dashboard</h1>
+        <p>Human Resource Management System overview</p>
+      </div>
+    </div>
+    <div class="hd-actions">
+      <button class="btn-secondary" (click)="viewAll()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        All Employees
+      </button>
+      <button class="btn-primary" (click)="goTo('/hrms/employees/new')">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Employee
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── Stat Cards ─── -->
+  <div class="stats-grid">
+    @for (s of stats; track s.label) {
+      <div class="stat-card" [class.clickable]="!!s.route" (click)="s.route ? goTo(s.route) : null">
+        <div class="stat-icon-wrap" [style.background]="s.bg">
+          <!-- users icon -->
+          @if (s.icon === 'users') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          }
+          @if (s.icon === 'check') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          }
+          @if (s.icon === 'pause') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="10" y1="15" x2="10" y2="9"/><line x1="14" y1="15" x2="14" y2="9"/></svg>
+          }
+          @if (s.icon === 'grid') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          }
+          @if (s.icon === 'user-plus') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          }
+          @if (s.icon === 'calendar') {
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" [attr.stroke]="s.color" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          }
+        </div>
+        <div class="stat-body">
+          <div class="stat-value" [style.color]="s.color">{{ s.value | number }}</div>
+          <div class="stat-label">{{ s.label }}</div>
+          @if (s.sub) { <div class="stat-sub">{{ s.sub }}</div> }
+        </div>
+        @if (s.route) {
+          <div class="stat-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- ─── Main Grid: Recent + Dept breakdown ─── -->
+  <div class="main-grid">
+
+    <!-- Recent Employees -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h3>Recent Employees</h3>
+          <p>Latest additions to the workforce</p>
+        </div>
+        <button class="link-btn" (click)="viewAll()">View all →</button>
+      </div>
+      <div class="recent-list">
+        @for (emp of recentEmployees; track emp.id) {
+          <div class="recent-row" (click)="viewEmployee(emp.id)">
+            <div class="re-avatar" [style.background-color]="emp.avatarColor">{{ emp.initials }}</div>
+            <div class="re-info">
+              <span class="re-name">{{ emp.fullName }}</span>
+              <span class="re-role">{{ emp.designation }} · {{ emp.department }}</span>
+            </div>
+            <div class="re-meta">
+              <span class="re-doj">{{ emp.doj }}</span>
+              <span class="re-badge" [class.active]="emp.status === 'Active'" [class.inactive]="emp.status === 'In-Active'">
+                <span class="dot"></span>{{ emp.status }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Department Breakdown -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h3>By Department</h3>
+          <p>Employee distribution across teams</p>
+        </div>
+      </div>
+      <div class="dept-list">
+        @for (d of deptStats; track d.name) {
+          <div class="dept-row">
+            <div class="dept-info">
+              <span class="dept-color-dot" [style.background]="d.color"></span>
+              <span class="dept-name">{{ d.name }}</span>
+              <span class="dept-count">{{ d.count }}</span>
+            </div>
+            <div class="dept-bar-track">
+              <div class="dept-bar-fill" [style.width.%]="d.pct" [style.background]="d.color"></div>
+            </div>
+            <span class="dept-pct">{{ d.pct }}%</span>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Employment Type + Quick Actions ─── -->
+  <div class="bottom-grid">
+
+    <!-- Employment Type -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h3>Employment Type</h3>
+          <p>Workforce composition breakdown</p>
+        </div>
+      </div>
+      <div class="type-list">
+        @for (t of empTypeBreakdown; track t.label) {
+          <div class="type-row">
+            <div class="type-label-group">
+              <span class="type-color-dot" [style.background]="t.color"></span>
+              <span class="type-label">{{ t.label }}</span>
+            </div>
+            <div class="type-bar-track">
+              <div class="type-bar-fill" [style.width.%]="t.pct" [style.background]="t.color"></div>
+            </div>
+            <div class="type-stats">
+              <span class="type-count">{{ t.count }}</span>
+              <span class="type-pct">{{ t.pct }}%</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="panel">
+      <div class="panel-header">
+        <div>
+          <h3>Quick Actions</h3>
+          <p>Common HR tasks at a glance</p>
+        </div>
+      </div>
+      <div class="actions-grid">
+        @for (a of quickActions; track a.label) {
+          <button class="action-tile" (click)="a.action()">
+            <div class="action-icon">
+              @if (a.icon === 'user-plus') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+              }
+              @if (a.icon === 'users') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              }
+              @if (a.icon === 'check-sq') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              }
+              @if (a.icon === 'bar-chart') {
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6d28d9" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+              }
+            </div>
+            <span class="action-label">{{ a.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,239 @@
+/* ── Page wrapper ─────────────────────────────────────────────────────────── */
+.pnf-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9fafb;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  overflow: hidden;
+  padding: 24px;
+}
+
+/* ── Decorative blobs ─────────────────────────────────────────────────────── */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.blob-1 {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, #ede9fe 0%, transparent 70%);
+  top: -120px;
+  right: -100px;
+  opacity: 0.7;
+}
+.blob-2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #ddd6fe 0%, transparent 70%);
+  bottom: -80px;
+  left: -80px;
+  opacity: 0.5;
+}
+
+/* ── Dot grid background ──────────────────────────────────────────────────── */
+.dot-grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(#e5e7eb 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.pnf-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 48px 40px 40px;
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  animation: card-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+/* ── SVG illustration ─────────────────────────────────────────────────────── */
+.pnf-illustration {
+  margin: 0 auto 8px;
+  width: 240px;
+  animation: float 4s ease-in-out infinite;
+}
+
+.pnf-illustration svg {
+  width: 100%;
+  height: auto;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* Floating SVG inner elements */
+.float-a { animation: svg-float-a 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.float-b { animation: svg-float-b 3.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.float-c { animation: svg-float-c 2.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+
+@keyframes svg-float-a { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-5px) rotate(8deg); } }
+@keyframes svg-float-b { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+@keyframes svg-float-c { 0%,100% { transform: rotate(15deg) translateY(0); } 50% { transform: rotate(30deg) translateY(-4px); } }
+
+/* ── 404 code ─────────────────────────────────────────────────────────────── */
+.pnf-code {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.code-4,
+.code-0 {
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: -4px;
+}
+
+.code-4 {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.code-0 {
+  color: #111827;
+}
+
+.code-left  { animation: pop-in 0.5s 0.1s cubic-bezier(0.34,1.56,0.64,1) both; }
+.code-0     { animation: pop-in 0.5s 0.2s cubic-bezier(0.34,1.56,0.64,1) both; }
+.code-right { animation: pop-in 0.5s 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.5) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0);    }
+}
+
+/* ── Heading & description ────────────────────────────────────────────────── */
+.pnf-title {
+  margin: 0 0 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  animation: fade-up 0.4s 0.35s ease both;
+}
+
+.pnf-desc {
+  margin: 0 0 28px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.65;
+  animation: fade-up 0.4s 0.42s ease both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Action buttons ───────────────────────────────────────────────────────── */
+.pnf-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  animation: fade-up 0.4s 0.5s ease both;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(109,40,217,0.30);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+  font-family: inherit;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #6d28d9, #5b21b6);
+  box-shadow: 0 6px 20px rgba(109,40,217,0.40);
+  transform: translateY(-2px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 22px;
+  background: transparent;
+  color: #374151;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, transform 0.15s;
+  font-family: inherit;
+}
+.btn-ghost:hover {
+  border-color: #6d28d9;
+  color: #6d28d9;
+  background: #f5f3ff;
+  transform: translateY(-2px);
+}
+.btn-ghost:active { transform: translateY(0); }
+
+/* ── Footer hint ──────────────────────────────────────────────────────────── */
+.pnf-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  letter-spacing: 0.3px;
+  animation: fade-up 0.4s 0.58s ease both;
+}
+.pnf-hint strong { color: #6b7280; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .pnf-card {
+    padding: 36px 24px 32px;
+    border-radius: 16px;
+  }
+  .code-4, .code-0 {
+    font-size: 4.5rem;
+  }
+  .pnf-illustration {
+    width: 190px;
+  }
+  .pnf-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .btn-primary, .btn-ghost {
+    justify-content: center;
+  }
+}

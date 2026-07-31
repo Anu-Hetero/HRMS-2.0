@@ -1,0 +1,348 @@
+$purple:       #7C3AED
+$purple-dark:  #6D28D9
+$purple-deeper: #4C1D95
+$purple-light: #EDE9FE
+$danger:       #DC2626
+$text-dark:    #111827
+$text-muted:   #6B7280
+$border:       #E5E7EB
+$white:        #FFFFFF
+
+*
+  box-sizing: border-box
+
+.login-page
+  display: flex
+  min-height: 100vh
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif
+
+// ── Left Panel ────────────────────────────────────────────
+.left-panel
+  flex: 1
+  background: linear-gradient(145deg, #4C1D95 0%, #6D28D9 45%, #7C3AED 100%)
+  display: flex
+  flex-direction: column
+  padding: 40px 44px
+  position: relative
+  overflow: hidden
+  min-height: 100vh
+
+  &::before
+    content: ''
+    position: absolute
+    top: -80px
+    right: -80px
+    width: 320px
+    height: 320px
+    border-radius: 50%
+    background: rgba(255, 255, 255, 0.05)
+    pointer-events: none
+
+  &::after
+    content: ''
+    position: absolute
+    bottom: -100px
+    left: -60px
+    width: 280px
+    height: 280px
+    border-radius: 50%
+    background: rgba(255, 255, 255, 0.04)
+    pointer-events: none
+
+.brand
+  display: flex
+  align-items: center
+  gap: 12px
+  margin-bottom: 32px
+
+.brand-icon
+  width: 40px
+  height: 40px
+  flex-shrink: 0
+
+  svg
+    width: 40px
+    height: 40px
+
+.brand-name
+  font-size: 22px
+  font-weight: 800
+  color: $white
+  letter-spacing: 1.5px
+
+.illustration-area
+  flex: 1
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 16px 0
+
+.hero-svg
+  width: 100%
+  max-width: 360px
+  height: auto
+  drop-shadow: 0 8px 24px rgba(0,0,0,0.2)
+
+.left-tagline
+  margin-bottom: 28px
+
+  h2
+    font-size: 24px
+    font-weight: 700
+    color: $white
+    line-height: 1.35
+    margin: 0 0 10px
+
+  p
+    font-size: 14px
+    color: rgba(255, 255, 255, 0.72)
+    line-height: 1.6
+    margin: 0
+
+.feature-pills
+  display: flex
+  flex-wrap: wrap
+  gap: 10px
+
+.pill
+  display: inline-flex
+  align-items: center
+  gap: 7px
+  background: rgba(255, 255, 255, 0.14)
+  border: 1px solid rgba(255, 255, 255, 0.2)
+  color: $white
+  font-size: 12px
+  font-weight: 500
+  padding: 7px 14px
+  border-radius: 20px
+  backdrop-filter: blur(4px)
+
+  svg
+    width: 14px
+    height: 14px
+    fill: currentColor
+    flex-shrink: 0
+
+// ── Right Panel ───────────────────────────────────────────
+.right-panel
+  width: 480px
+  min-height: 100vh
+  background: #F5F3FF
+  display: flex
+  align-items: center
+  justify-content: center
+  padding: 40px 32px
+
+.form-card
+  background: $white
+  border-radius: 20px
+  padding: 44px 40px 36px
+  box-shadow: 0 8px 40px rgba(109, 40, 217, 0.12)
+  width: 100%
+
+// ── Form Header ───────────────────────────────────────────
+.form-header
+  text-align: center
+  margin-bottom: 32px
+
+.form-logo
+  width: 56px
+  height: 56px
+  background: $purple-light
+  border-radius: 16px
+  display: flex
+  align-items: center
+  justify-content: center
+  margin: 0 auto 16px
+
+  svg
+    width: 32px
+    height: 32px
+
+.form-header h2
+  font-size: 22px
+  font-weight: 700
+  color: $text-dark
+  margin: 0 0 6px
+
+.form-header p
+  font-size: 13.5px
+  color: $text-muted
+  margin: 0
+
+// ── Form Groups ───────────────────────────────────────────
+.form-group
+  margin-bottom: 20px
+
+  label
+    display: block
+    font-size: 13px
+    font-weight: 600
+    color: $text-dark
+    margin-bottom: 8px
+
+.input-wrap
+  position: relative
+  display: flex
+  align-items: center
+
+.ico
+  position: absolute
+  left: 13px
+  display: flex
+  align-items: center
+  color: #9CA3AF
+  pointer-events: none
+
+  svg
+    width: 18px
+    height: 18px
+    fill: currentColor
+
+input
+  width: 100%
+  padding: 13px 14px 13px 44px
+  border: 1.5px solid $border
+  border-radius: 10px
+  font-size: 14px
+  color: $text-dark
+  background: #FAFAFA
+  font-family: inherit
+  outline: none
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s
+
+  &::placeholder
+    color: #C4CADF
+
+  &:focus
+    border-color: $purple
+    background: $white
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12)
+
+  &.err
+    border-color: $danger
+    background: #FFF8F8
+
+    &:focus
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1)
+
+.eye-btn
+  position: absolute
+  right: 11px
+  background: none
+  border: none
+  cursor: pointer
+  padding: 5px
+  display: flex
+  align-items: center
+  color: #9CA3AF
+  border-radius: 6px
+  transition: color 0.15s, background 0.15s
+
+  &:hover
+    color: $purple
+    background: $purple-light
+
+  svg
+    width: 18px
+    height: 18px
+    fill: currentColor
+
+.err-msg
+  margin: 6px 0 0 2px
+  font-size: 12px
+  color: $danger
+  font-weight: 500
+
+// ── Alert ─────────────────────────────────────────────────
+.alert-err
+  display: flex
+  align-items: center
+  gap: 8px
+  background: #FEF2F2
+  border: 1px solid #FECACA
+  border-radius: 10px
+  padding: 11px 14px
+  font-size: 13px
+  color: #B91C1C
+  font-weight: 500
+  margin-bottom: 18px
+
+  svg
+    width: 18px
+    height: 18px
+    fill: #DC2626
+    flex-shrink: 0
+
+// ── Submit ────────────────────────────────────────────────
+.btn-sign-in
+  width: 100%
+  padding: 14px
+  background: linear-gradient(135deg, $purple-dark, $purple)
+  color: $white
+  border: none
+  border-radius: 10px
+  font-size: 15px
+  font-weight: 600
+  cursor: pointer
+  display: flex
+  align-items: center
+  justify-content: center
+  gap: 8px
+  font-family: inherit
+  letter-spacing: 0.3px
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s
+  margin-top: 6px
+
+  &:hover:not(:disabled)
+    background: linear-gradient(135deg, $purple-deeper, $purple-dark)
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.38)
+    transform: translateY(-1px)
+
+  &:active:not(:disabled)
+    transform: translateY(0)
+    box-shadow: none
+
+  &:disabled
+    opacity: 0.7
+    cursor: not-allowed
+
+.spinner
+  width: 17px
+  height: 17px
+  border: 2px solid rgba(255,255,255,0.35)
+  border-top-color: $white
+  border-radius: 50%
+  animation: spin 0.65s linear infinite
+  flex-shrink: 0
+
+@keyframes spin
+  to
+    transform: rotate(360deg)
+
+.footer-note
+  text-align: center
+  font-size: 12px
+  color: #B0B7C3
+  margin: 24px 0 0
+
+// ── Responsive ────────────────────────────────────────────
+@media (max-width: 900px)
+  .left-panel
+    display: none
+
+  .right-panel
+    width: 100%
+    min-height: 100vh
+    background: linear-gradient(145deg, #4C1D95 0%, #7C3AED 100%)
+
+  .form-card
+    max-width: 420px
+    margin: 0 auto
+
+@media (max-width: 480px)
+  .right-panel
+    padding: 24px 16px
+
+  .form-card
+    padding: 32px 24px 28px

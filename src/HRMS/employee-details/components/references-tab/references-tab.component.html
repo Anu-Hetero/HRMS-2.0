@@ -1,0 +1,158 @@
+<div class="tab-content">
+  <div class="content-header-row">
+    <div><h3>Reference Details</h3><p>Add or Edit Employee Reference Details</p></div>
+    <button class="btn-add-family" (click)="addReference.emit()">Add Reference Details</button>
+  </div>
+  <div class="table-responsive">
+    <table class="family-table">
+      <thead>
+        <tr>
+          <th>S No</th><th>Reference Type</th><th>Is Relevant</th><th>Reference ID</th>
+          <th>Name</th><th>Designation</th><th>Company</th><th>Contact No</th>
+          <th>Address</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of referenceRecords; track r.id; let i = $index) {
+          <tr>
+            <td>{{ (i+1).toString().padStart(2,'0') }}</td>
+            <td>{{ r.referenceType }}</td>
+            <td>{{ r.isRelevant ? 'Yes' : 'No' }}</td>
+            <td>{{ displayVal(r.referenceId) }}</td>
+            <td>{{ r.name }}</td>
+            <td>{{ displayVal(r.designation) }}</td>
+            <td>{{ displayVal(r.company) }}</td>
+            <td>{{ displayVal(r.contactNumber) }}</td>
+            <td>{{ displayVal(r.addressLane1) }}</td>
+            <td>
+              <span class="status-badge"
+                    [class.badge-active]="r.status === 'Active'"
+                    [class.badge-inactive]="r.status === 'In-Active'">
+                <span class="badge-dot"></span>{{ r.status }}
+              </span>
+            </td>
+            <td>
+              <button class="btn-icon-edit" (click)="editRecord.emit(r)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="11" class="no-data">
+              <div class="no-data-inner">
+                <p>No reference records added yet</p>
+                <button class="btn-link" (click)="addReference.emit()">Add Reference</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ REFERENCE MODAL ══════════════ -->
+@if (showReferenceModal) {
+  <div class="modal-overlay" (click)="closeModal.emit()">
+    <div class="modal-dialog" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>@if (editingReferenceId !== null) { Edit Reference } @else { Add Reference Details }</h3>
+          <div class="modal-subtitle">{{ empSubtitle }}</div>
+        </div>
+        <button class="modal-close" (click)="closeModal.emit()">×</button>
+      </div>
+      <form [formGroup]="referenceForm" (ngSubmit)="saveRecord.emit()" class="modal-body">
+        <div class="field-grid edit-grid">
+          <div class="field-edit">
+            <label>Reference Type <span class="req">*</span></label>
+            <select formControlName="referenceType">
+              @for (o of referenceTypeOpts; track o) { <option [value]="o">{{ o }}</option> }
+            </select>
+          </div>
+          <div class="field-edit">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="isRelative" />
+              <span class="checkbox-text">Is Relative</span>
+            </label>
+          </div>
+          <div class="field-edit">
+            <label>Employee ID / Reference ID</label>
+            <input type="text" formControlName="referenceId" />
+          </div>
+          <div class="field-edit">
+            <label>Designation</label>
+            <input type="text" formControlName="designation" />
+          </div>
+          <div class="field-edit">
+            <label>Name <span class="req">*</span></label>
+            <input type="text" formControlName="name"
+                   [class.error-input]="isInvalid(referenceForm,'name')" />
+            @if (fieldError(referenceForm,'name','required')) {
+              <span class="err">Name is required</span>
+            }
+          </div>
+          <div class="field-edit">
+            <label>Contact Number</label>
+            <input type="tel" formControlName="contactNumber" />
+          </div>
+          <div class="field-edit col-span-2">
+            <label>Address Lane 1</label>
+            <input type="text" formControlName="addressLane1" />
+          </div>
+          <div class="field-edit col-span-2">
+            <label>Address Lane 2</label>
+            <input type="text" formControlName="addressLane2" />
+          </div>
+          <div class="field-edit">
+            <label>Location</label>
+            <select formControlName="location">
+              <option value="">Select</option>
+              @for (o of locationOpts; track o) { <option [value]="o">{{ o }}</option> }
+            </select>
+          </div>
+          <div class="field-edit">
+            <label>State</label>
+            <input type="text" formControlName="state" />
+          </div>
+          <div class="field-edit">
+            <label>City</label>
+            <input type="text" formControlName="city" />
+          </div>
+          <div class="field-edit">
+            <label>Pincode</label>
+            <input type="text" formControlName="pincode" maxlength="6"
+                   [class.error-input]="isInvalid(referenceForm,'pincode')" />
+            @if (fieldError(referenceForm,'pincode','pattern')) {
+              <span class="err">Enter valid 6-digit pincode</span>
+            }
+          </div>
+          <div class="field-edit">
+            <label>Company</label>
+            <input type="text" formControlName="company" />
+          </div>
+          <div class="field-edit">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="isRelevant" />
+              <span class="checkbox-text">Is Relevant</span>
+            </label>
+          </div>
+          <div class="field-edit">
+            <label>Status <span class="req">*</span></label>
+            <select formControlName="status">
+              <option value="Active">Active</option>
+              <option value="In-Active">In-Active</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+          <button type="submit" class="btn-save-primary">
+            {{ editingReferenceId !== null ? 'Save' : 'Save and Add Reference Details' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

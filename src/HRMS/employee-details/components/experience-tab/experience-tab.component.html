@@ -1,0 +1,326 @@
+<div class="tab-content family-tab-content">
+  <div class="content-header-row">
+    <div><h3>Experience Details</h3><p>Add or Edit Employee Experience Details</p></div>
+    <button class="btn-add-family" (click)="addExperience.emit()">Add Experience Details</button>
+  </div>
+  <div class="table-responsive">
+    <table class="family-table">
+      <thead>
+        <tr>
+          <th>S No</th><th>Qualification</th><th>Branch</th><th>Exp (Months)</th>
+          <th>Relevant</th><th>Designation</th><th>Employer Name</th>
+          <th>Industry Type</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of experienceRecords; track r.id; let i = $index) {
+          <tr>
+            <td>{{ (i+1).toString().padStart(2,'0') }}</td>
+            <td>{{ r.qualification }}</td>
+            <td>{{ r.branch || '—' }}</td>
+            <td>{{ r.experienceMonths }}</td>
+            <td>{{ r.isExperienceRelevant === 1 ? 'Yes' : 'No' }}</td>
+            <td>{{ r.designation }}</td>
+            <td>{{ r.employerName }}</td>
+            <td>{{ getIndustryTypeName(r.industryType) }}</td>
+            <td>
+              <span class="status-badge"
+                    [class.badge-active]="r.status === 1001"
+                    [class.badge-inactive]="r.status === 1002">
+                <span class="badge-dot"></span>{{ r.status === 1001 ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="action-cell">
+              <button class="btn-icon-edit" (click)="editRecord.emit(r)" title="Edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-status-toggle"
+                      [class.btn-deactivate]="r.status === 1001"
+                      [class.btn-activate]="r.status === 1002"
+                      [disabled]="deletingExperienceId === r.id"
+                      (click)="toggleStatus.emit(r)">
+                @if (deletingExperienceId === r.id) { <span class="spin-xs"></span> }
+                @else { {{ r.status === 1001 ? 'Inactive' : 'Active' }} }
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="10" class="no-data">
+              <div class="no-data-inner">
+                <p>No experience records added yet</p>
+                <button class="btn-link" (click)="addExperience.emit()">Add Experience</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════════ EXPERIENCE MODAL ══════════════ -->
+@if (showExperienceModal) {
+  <div class="modal-overlay" (click)="closeModal.emit()">
+    <div class="modal-dialog modal-exp" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <h3>
+            @if (editingExperienceId !== null) { Edit Experience }
+            @else { Add Experience Details }
+          </h3>
+          <div class="modal-subtitle">{{ empSubtitle }}</div>
+        </div>
+        <button class="modal-close" (click)="closeModal.emit()">×</button>
+      </div>
+
+      <form [formGroup]="experienceForm" (ngSubmit)="saveRecord.emit()" class="exp-form-shell">
+        @if (isExperienceSaving) {
+          <div class="modal-loading-overlay"><span class="spin-md"></span></div>
+        }
+
+        <div class="exp-form-scroll">
+          @if (experienceSaveError) {
+            <div class="form-error-banner" style="margin-bottom:10px">{{ experienceSaveError }}</div>
+          }
+
+          <!-- Academic Background -->
+          <p class="modal-section-label">Academic Background</p>
+          <div class="field-grid edit-grid">
+            <div class="field-edit">
+              <label>Qualification <span class="req">*</span></label>
+              <div class="univ-search-wrapper" [class.error-input]="isInvalid(experienceForm,'qualificationId')">
+                <div class="univ-input-row">
+                  <input type="text" class="univ-search-input" autocomplete="off"
+                         [value]="expQualificationSearch"
+                         (input)="expQualificationInput.emit($event)"
+                         (focus)="showExpQualificationDropdown = true"
+                         (blur)="onExpQualBlur()"
+                         placeholder="Search qualification…" />
+                  @if (expQualificationSearch) {
+                    <button type="button" class="univ-clear-btn" (click)="expQualificationCleared.emit()">×</button>
+                  }
+                </div>
+                @if (showExpQualificationDropdown) {
+                  <div class="univ-dropdown-list">
+                    @for (ql of filteredExpQualifications; track ql.qualificationId) {
+                      <div class="univ-option" (mousedown)="onExpQualSelect(ql)">{{ ql.qualificationName }}</div>
+                    }
+                    @if (!filteredExpQualifications.length) {
+                      <div class="univ-no-results">No results found</div>
+                    }
+                  </div>
+                }
+              </div>
+              @if (fieldError(experienceForm,'qualificationId','required')) {
+                <span class="err">Qualification is required</span>
+              }
+            </div>
+            <div class="field-edit">
+              <label>Branch / Stream</label>
+              @if (isLoadingExpBranches) {
+                <div class="branch-loading"><span class="spin-xs"></span>&nbsp;Loading branches…</div>
+              } @else {
+                <select formControlName="branchId" [class.select-placeholder]="!experienceForm.get('branchId')?.value">
+                  <option [ngValue]="null">
+                    @if (!experienceForm.get('qualificationId')?.value) { -- Select Qualification first -- }
+                    @else if (expBranches.length === 0) { -- No branches available -- }
+                    @else { -- Select Branch -- }
+                  </option>
+                  @for (b of expBranches; track b.branchId) {
+                    <option [ngValue]="b.branchId">{{ b.branchName }}</option>
+                  }
+                </select>
+                @if (showExpBranchHint) {
+                  <span class="branch-no-data-hint">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    No branches linked to this qualification. Branch is not required.
+                  </span>
+                }
+              }
+            </div>
+          </div>
+
+          <!-- Employment Period -->
+          <p class="modal-section-label">Employment Period</p>
+          <div class="field-grid edit-grid exp-3col">
+            <div class="field-edit">
+              <label>From Date <span class="req">*</span></label>
+              <hrms-datepicker formControlName="fromDate"
+                              [class.error-input]="isInvalid(experienceForm,'fromDate')"></hrms-datepicker>
+              @if (fieldError(experienceForm,'fromDate','required')) {
+                <span class="err">From date is required</span>
+              }
+            </div>
+            <div class="field-edit">
+              <label>To Date</label>
+              <hrms-datepicker formControlName="toDate"
+                [class.datepicker-disabled]="isCurrentlyWorking || !experienceForm.get('fromDate')?.value">
+              </hrms-datepicker>
+              @if (!isCurrentlyWorking && !experienceForm.get('fromDate')?.value) {
+                <span class="exp-field-hint">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  Select a From Date first
+                </span>
+              }
+              @if (expDateOrderWarning && !isCurrentlyWorking) {
+                <span class="err">End date must be later than the start date</span>
+              }
+              <label class="exp-current-check">
+                <input type="checkbox" [checked]="isCurrentlyWorking"
+                       (change)="toggleCurrentlyWorking.emit($any($event.target).checked)" />
+                <span>Currently working here</span>
+              </label>
+            </div>
+            <div class="field-edit">
+              <label>Duration</label>
+              <div class="exp-duration-display">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                {{ (!expDateOrderWarning && experienceCalcMonths > 0) ? experienceCalcMonths + ' month' + (experienceCalcMonths !== 1 ? 's' : '') : '—' }}
+              </div>
+            </div>
+          </div>
+
+          <label class="exp-relevance-bar" [class.is-relevant]="experienceForm.get('isExperienceRelevant')?.value === 1">
+            <div class="toggle-wrap">
+              <input type="checkbox" class="toggle-input"
+                     [checked]="experienceForm.get('isExperienceRelevant')?.value === 1"
+                     (change)="relevanceToggle.emit($any($event.target).checked)" />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </div>
+            <span class="exp-relevance-text">This experience is relevant to the current role</span>
+          </label>
+
+          <!-- Role & Employer -->
+          <p class="modal-section-label">Role &amp; Employer Details</p>
+          <div class="field-grid edit-grid exp-3col">
+            <div class="field-edit">
+              <label>Designation <span class="req">*</span></label>
+              <input type="text" formControlName="designation" placeholder="e.g. Software Engineer"
+                     appNoLeadingSpace [class.error-input]="isInvalid(experienceForm,'designation')" />
+              @if (fieldError(experienceForm,'designation','required')) { <span class="err">Required</span> }
+              @else if (fieldError(experienceForm,'designation','minlength')) { <span class="err">Min 2 characters</span> }
+              @else if (fieldError(experienceForm,'designation','pattern')) { <span class="err">Cannot start with a space</span> }
+            </div>
+            <div class="field-edit">
+              <label>Nature of Work</label>
+              <input type="text" formControlName="natureOfWork" placeholder="e.g. Full-time" appNoLeadingSpace />
+            </div>
+            <div class="field-edit">
+              <label>Employer Name <span class="req">*</span></label>
+              <input type="text" formControlName="employerName" placeholder="Company name"
+                     appNoLeadingSpace [class.error-input]="isInvalid(experienceForm,'employerName')" />
+              @if (fieldError(experienceForm,'employerName','required')) { <span class="err">Required</span> }
+              @else if (fieldError(experienceForm,'employerName','minlength')) { <span class="err">Min 2 characters</span> }
+              @else if (fieldError(experienceForm,'employerName','pattern')) { <span class="err">Cannot start with a space</span> }
+            </div>
+            <div class="field-edit col-span-2">
+              <label>Employer Address</label>
+              <input type="text" formControlName="employerAddress" placeholder="Office address" appNoLeadingSpace />
+            </div>
+            <div class="field-edit">
+              <label>Employer Phone</label>
+              <input type="tel" formControlName="employerPhone" placeholder="10-digit number"
+                     maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10"
+                     [class.error-input]="isInvalid(experienceForm,'employerPhone')" />
+              @if (fieldError(experienceForm,'employerPhone','pattern')) {
+                <span class="err">Enter valid 10-digit number</span>
+              }
+            </div>
+          </div>
+
+          <!-- Industry & Salary -->
+          <p class="modal-section-label">Industry, Function &amp; Compensation</p>
+          <div class="field-grid edit-grid exp-3col">
+            <div class="field-edit">
+              <label>Industry Type</label>
+              <div class="univ-search-wrapper">
+                <div class="univ-input-row">
+                  <input type="text" class="univ-search-input" autocomplete="off"
+                         [value]="industryTypeSearch"
+                         (input)="industryTypeInput.emit($event)"
+                         (focus)="showIndustryTypeDropdown = true"
+                         (blur)="onIndustryTypeBlur()"
+                         placeholder="Search industry…" />
+                  @if (industryTypeSearch) {
+                    <button type="button" class="univ-clear-btn" (click)="industryTypeCleared.emit()">×</button>
+                  }
+                </div>
+                @if (showIndustryTypeDropdown) {
+                  <div class="univ-dropdown-list">
+                    @for (it of filteredIndustryTypes; track it.industryTypeId) {
+                      <div class="univ-option" (mousedown)="onIndustryTypeSelect(it)">{{ it.industryTypeName }}</div>
+                    }
+                    @if (!filteredIndustryTypes.length) {
+                      <div class="univ-no-results">No results found</div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="field-edit">
+              <label>Functional Area</label>
+              <div class="univ-search-wrapper">
+                <div class="univ-input-row">
+                  <input type="text" class="univ-search-input" autocomplete="off"
+                         [value]="functionalAreaSearch"
+                         (input)="functionalAreaInput.emit($event)"
+                         (focus)="showFunctionalAreaDropdown = true"
+                         (blur)="onFunctionalAreaBlur()"
+                         placeholder="Search functional area…" />
+                  @if (functionalAreaSearch) {
+                    <button type="button" class="univ-clear-btn" (click)="functionalAreaCleared.emit()">×</button>
+                  }
+                </div>
+                @if (showFunctionalAreaDropdown) {
+                  <div class="univ-dropdown-list">
+                    @for (fa of filteredFunctionalAreas; track fa.functionalAreaId) {
+                      <div class="univ-option" (mousedown)="onFunctionalAreaSelect(fa)">{{ fa.functionalAreaIName }}</div>
+                    }
+                    @if (!filteredFunctionalAreas.length) {
+                      <div class="univ-no-results">No results found</div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+            <div class="field-edit">
+              <label>Salary Per Month</label>
+              <div class="input-with-unit">
+                <input type="number" formControlName="salaryPerMonth" min="0" placeholder="0.00" />
+                <span class="unit">INR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Details -->
+          <p class="modal-section-label">Additional Details</p>
+          <div class="field-grid edit-grid exp-3col">
+            <div class="field-edit">
+              <label>Reason for Leaving</label>
+              <input type="text" formControlName="reasonForLeaving" placeholder="e.g. Better opportunity" appNoLeadingSpace />
+            </div>
+            <div class="field-edit">
+              <label>Achievements</label>
+              <input type="text" formControlName="achievements" placeholder="Key achievements" appNoLeadingSpace />
+            </div>
+            <div class="field-edit">
+              <label>Comments</label>
+              <input type="text" formControlName="comments" placeholder="Any remarks" appNoLeadingSpace />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer exp-sticky-footer">
+          <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+          <button type="submit" class="btn-save-primary" [disabled]="isExperienceSaving">
+            @if (isExperienceSaving) { <span class="spin-xs"></span>&nbsp;Saving… }
+            @else { {{ editingExperienceId !== null ? 'Update Experience' : 'Save Experience' }} }
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+}

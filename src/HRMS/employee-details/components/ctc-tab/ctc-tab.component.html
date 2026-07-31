@@ -1,0 +1,123 @@
+<div class="tab-content">
+  <div class="content-header"><h3>CTC Details</h3><p>Add or Edit Employee CTC Details</p></div>
+  <div class="ctc-layout">
+
+    <!-- Current CTC (read-only) -->
+    <div class="ctc-panel">
+      <div class="ctc-panel-header">
+        <span class="ctc-panel-title">Current CTC</span>
+        <button class="btn-other-allowances">Other Allowances</button>
+      </div>
+      <div class="ctc-meta-row">
+        <div class="ctc-meta-field"><label>Financial Year</label><select class="ctc-select-sm"><option>{{ ctcData.current.financialYear }}</option></select></div>
+        <div class="ctc-meta-field"><label>Pay Structure</label><div class="ctc-readonly-val">{{ ctcData.current.payStructure }}</div></div>
+        <div class="ctc-meta-field"><label>Gross per Month</label><div class="ctc-readonly-val with-unit">{{ ctcData.current.grossPerMonth }}<span class="unit">INR</span></div></div>
+      </div>
+      <div class="ctc-body-grid">
+        <div class="ctc-col">
+          <div class="ctc-col-title">Earnings</div>
+          <div class="ctc-row-item"><span>Gross</span><div class="ctc-val">{{ ctcData.current.earnings.gross }}</div></div>
+          <div class="ctc-row-item"><span>Basic</span><div class="ctc-val">{{ ctcData.current.earnings.basic }}</div></div>
+          <div class="ctc-row-item"><span>CA</span><div class="ctc-val">{{ ctcData.current.earnings.ca }}</div></div>
+          <div class="ctc-row-item"><span>Education</span><div class="ctc-val">{{ ctcData.current.earnings.education }}</div></div>
+          <div class="ctc-row-item"><span>HRA</span><div class="ctc-val">{{ ctcData.current.earnings.hra }}</div></div>
+          <div class="ctc-row-item"><span>KIT Allow</span><div class="ctc-val">{{ ctcData.current.earnings.kitAllow }}</div></div>
+          <div class="ctc-row-item"><span>Medical Allow</span><div class="ctc-val">{{ ctcData.current.earnings.medicalAllow }}</div></div>
+          <div class="ctc-row-item"><span>SPL Allow</span><div class="ctc-val">{{ ctcData.current.earnings.splAllow }}</div></div>
+          <div class="ctc-row-item"><span>Travel Allow</span><div class="ctc-val">{{ ctcData.current.earnings.travelAllow }}</div></div>
+        </div>
+        <div class="ctc-col">
+          <div class="ctc-col-title">Deductions</div>
+          <div class="ctc-row-item"><span>PT</span><div class="ctc-val">{{ ctcData.current.deductions.pt }}</div></div>
+          <div class="ctc-row-item"><span>PF</span><div class="ctc-val">{{ ctcData.current.deductions.pf }}</div></div>
+          <div class="ctc-row-item"><span>ESI</span><div class="ctc-val">{{ ctcData.current.deductions.esi }}</div></div>
+        </div>
+        <div class="ctc-col">
+          <div class="ctc-col-title">Annual Benefits</div>
+          <div class="ctc-row-item"><span>Medical Premium</span><div class="ctc-val">{{ ctcData.current.annualBenefits.medicalPremium }}</div></div>
+          <div class="ctc-row-item"><span>LTA</span><div class="ctc-val">{{ ctcData.current.annualBenefits.lta }}</div></div>
+          <div class="ctc-row-item"><span>PF</span><div class="ctc-val">{{ ctcData.current.annualBenefits.pf }}</div></div>
+          <div class="ctc-row-item"><span>ESI</span><div class="ctc-val">{{ ctcData.current.annualBenefits.esi }}</div></div>
+          <div class="ctc-row-item"><span>Bonus</span><div class="ctc-val">{{ ctcData.current.annualBenefits.bonus }}</div></div>
+          <div class="ctc-row-item"><span>Annual Bonus</span><div class="ctc-val">{{ ctcData.current.annualBenefits.annualBonus }}</div></div>
+          <div class="ctc-row-item"><span>Gratuity</span><div class="ctc-val">{{ ctcData.current.annualBenefits.gratuity }}</div></div>
+          <div class="ctc-row-item"><span>Retention Bonus</span><div class="ctc-val">{{ ctcData.current.annualBenefits.retentionBonus }}</div></div>
+          <div class="ctc-row-item"><span>Variable Pay</span><div class="ctc-val">{{ ctcData.current.annualBenefits.variablePay }}</div></div>
+          <div class="ctc-row-item"><span>Performance Linked Bonus (ERA)</span><div class="ctc-val">{{ ctcData.current.annualBenefits.performanceLinkedBonus }}</div></div>
+        </div>
+      </div>
+      <div class="ctc-totals">
+        <div class="ctc-total-row"><div class="ctc-total-item"><label>Total Earnings</label><div class="ctc-val">{{ ctcData.current.totals.totalEarnings }}</div></div><div class="ctc-total-item"><label>Total Deductions</label><div class="ctc-val">{{ ctcData.current.totals.totalDeductions }}</div></div><div class="ctc-total-item"><label>Total Annual Be.</label><div class="ctc-val">{{ ctcData.current.totals.totalAnnualBe }}</div></div></div>
+        <div class="ctc-total-row"><div class="ctc-total-item"><label>Net Per Month</label><div class="ctc-val">{{ ctcData.current.totals.netPerMonth }}</div></div><div class="ctc-total-item"><label>Gross Per Month</label><div class="ctc-val">{{ ctcData.current.totals.grossPerMonth }}</div></div><div class="ctc-total-item"><label>CTC Per Month</label><div class="ctc-val">{{ ctcData.current.totals.ctcPerMonth }}</div></div></div>
+        <div class="ctc-total-row"><div class="ctc-total-item"><label>Net per Year</label><div class="ctc-val">{{ ctcData.current.totals.netPerYear }}</div></div><div class="ctc-total-item"><label>Gross per Year</label><div class="ctc-val">{{ ctcData.current.totals.grossPerYear }}</div></div><div class="ctc-total-item"><label>CTC per Year</label><div class="ctc-val">{{ ctcData.current.totals.ctcPerYear }}</div></div></div>
+      </div>
+      <div class="ctc-status-row">
+        <div class="ctc-status-item"><label>Status Type</label><div class="ctc-readonly-val">{{ ctcData.current.statusType }}</div></div>
+        <div class="ctc-status-item"><label>Action Type</label><div class="ctc-readonly-val">{{ ctcData.current.actionType }}</div></div>
+      </div>
+    </div>
+
+    <!-- New CTC (editable) -->
+    <div class="ctc-panel">
+      <div class="ctc-panel-header">
+        <span class="ctc-panel-title">New CTC</span>
+        @if (!isNew) { <button class="btn-save" (click)="saveNewCtc.emit()">Save</button> }
+      </div>
+      <form [formGroup]="newCtcForm">
+        <div class="ctc-meta-row">
+          <div class="ctc-meta-field"><label>Financial Year</label><select formControlName="financialYear" class="ctc-select-sm">@for (o of financialYearOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+          <div class="ctc-meta-field"><label>Pay Structure</label><select formControlName="payStructure" class="ctc-select-sm">@for (o of payStructureOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+          <div class="ctc-meta-field"><label>Proposed Gross per Month</label><div class="ctc-input-unit"><input type="number" formControlName="proposedGrossPerMonth" placeholder="--" class="ctc-input" /><span class="unit">INR</span></div></div>
+        </div>
+        <div class="ctc-esi-row">
+          <label class="checkbox-label"><input type="checkbox" formControlName="esiCycleConsider" /><span class="checkbox-text">ESI Cycle Consider (Apr - Sep &amp; Oct - Mar)</span></label>
+        </div>
+        <div class="ctc-body-grid">
+          <div class="ctc-col">
+            <div class="ctc-col-title">Earnings</div>
+            <div class="ctc-row-item"><span>Gross</span><div class="ctc-val">{{ ctcData.new.earnings.gross }}</div></div>
+            <div class="ctc-row-item"><span>Basic</span><div class="ctc-val">{{ ctcData.new.earnings.basic }}</div></div>
+            <div class="ctc-row-item"><span>CA</span><div class="ctc-val">{{ ctcData.new.earnings.ca }}</div></div>
+            <div class="ctc-row-item"><span>Education</span><div class="ctc-val">{{ ctcData.new.earnings.education }}</div></div>
+            <div class="ctc-row-item"><span>HRA</span><div class="ctc-val">{{ ctcData.new.earnings.hra }}</div></div>
+            <div class="ctc-row-item"><span>KIT Allow</span><div class="ctc-val">{{ ctcData.new.earnings.kitAllow }}</div></div>
+            <div class="ctc-row-item"><span>Medical Allow</span><div class="ctc-val">{{ ctcData.new.earnings.medicalAllow }}</div></div>
+            <div class="ctc-row-item"><span>SPL Allow</span><div class="ctc-val">{{ ctcData.new.earnings.splAllow }}</div></div>
+            <div class="ctc-row-item"><span>Travel Allow</span><div class="ctc-val">{{ ctcData.new.earnings.travelAllow }}</div></div>
+          </div>
+          <div class="ctc-col">
+            <div class="ctc-col-title">Deductions</div>
+            <div class="ctc-row-item"><span>PT</span><div class="ctc-val">{{ ctcData.new.deductions.pt }}</div></div>
+            <div class="ctc-row-item"><span>PF</span><div class="ctc-val">{{ ctcData.new.deductions.pf }}</div></div>
+            <div class="ctc-row-item"><span>ESI</span><div class="ctc-val">{{ ctcData.new.deductions.esi }}</div></div>
+          </div>
+          <div class="ctc-col">
+            <div class="ctc-col-title">Annual Benefits</div>
+            <div class="ctc-row-item"><span>Medical Premium</span><div class="ctc-val">{{ ctcData.new.annualBenefits.medicalPremium }}</div></div>
+            <div class="ctc-row-item"><span>LTA</span><div class="ctc-val">{{ ctcData.new.annualBenefits.lta }}</div></div>
+            <div class="ctc-row-item"><span>PF</span><div class="ctc-val">{{ ctcData.new.annualBenefits.pf }}</div></div>
+            <div class="ctc-row-item"><span>ESI</span><div class="ctc-val">{{ ctcData.new.annualBenefits.esi }}</div></div>
+            <div class="ctc-row-item"><span>Bonus</span><div class="ctc-val">{{ ctcData.new.annualBenefits.bonus }}</div></div>
+            <div class="ctc-row-item"><span>Annual Bonus</span><div class="ctc-val">{{ ctcData.new.annualBenefits.annualBonus }}</div></div>
+            <div class="ctc-row-item"><span>Gratuity</span><div class="ctc-val">{{ ctcData.new.annualBenefits.gratuity }}</div></div>
+            <div class="ctc-row-item"><span>Retention Bonus</span><div class="ctc-val">{{ ctcData.new.annualBenefits.retentionBonus }}</div></div>
+            <div class="ctc-row-item"><span>Variable Pay</span><div class="ctc-val">{{ ctcData.new.annualBenefits.variablePay }}</div></div>
+            <div class="ctc-row-item"><span>Performance Linked Bonus (ERA)</span><div class="ctc-val">{{ ctcData.new.annualBenefits.performanceLinkedBonus }}</div></div>
+          </div>
+        </div>
+        <div class="ctc-totals">
+          <div class="ctc-total-row"><div class="ctc-total-item"><label>Total Earnings</label><div class="ctc-val">{{ ctcData.new.totals.totalEarnings }}</div></div><div class="ctc-total-item"><label>Total Deductions</label><div class="ctc-val">{{ ctcData.new.totals.totalDeductions }}</div></div><div class="ctc-total-item"><label>Total Annual Be.</label><div class="ctc-val">{{ ctcData.new.totals.totalAnnualBe }}</div></div></div>
+          <div class="ctc-total-row"><div class="ctc-total-item"><label>Net Per Month</label><div class="ctc-val">{{ ctcData.new.totals.netPerMonth }}</div></div><div class="ctc-total-item"><label>Gross Per Month</label><div class="ctc-val">{{ ctcData.new.totals.grossPerMonth }}</div></div><div class="ctc-total-item"><label>CTC Per Month</label><div class="ctc-val">{{ ctcData.new.totals.ctcPerMonth }}</div></div></div>
+          <div class="ctc-total-row"><div class="ctc-total-item"><label>Net per Year</label><div class="ctc-val">{{ ctcData.new.totals.netPerYear }}</div></div><div class="ctc-total-item"><label>Gross per Year</label><div class="ctc-val">{{ ctcData.new.totals.grossPerYear }}</div></div><div class="ctc-total-item"><label>CTC per Year</label><div class="ctc-val">{{ ctcData.new.totals.ctcPerYear }}</div></div></div>
+        </div>
+        <div class="ctc-status-row editable">
+          <div class="ctc-status-item"><label>Status Type</label><select formControlName="statusType" class="ctc-select-sm">@for (o of statusTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+          <div class="ctc-status-item"><label>Action Type</label><select formControlName="actionType" class="ctc-select-sm">@for (o of actionTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+          <div class="ctc-status-item"><label>Effective Date</label><input type="date" formControlName="effectiveDate" class="ctc-input-sm" /></div>
+          <div class="ctc-status-item"><label>Note/Comment</label><input type="text" formControlName="noteComment" class="ctc-input-sm" /></div>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

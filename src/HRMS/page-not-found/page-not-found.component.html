@@ -1,0 +1,72 @@
+<div class="pnf-page">
+
+  <!-- Decorative background blobs -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="dot-grid"></div>
+
+  <div class="pnf-card">
+
+    <!-- SVG Illustration -->
+    <div class="pnf-illustration">
+      <svg viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Ground shadow -->
+        <ellipse cx="160" cy="205" rx="90" ry="10" fill="#ede9fe" opacity="0.6"/>
+
+        <!-- Floating document base -->
+        <rect x="80" y="50" width="160" height="120" rx="10" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+
+        <!-- Document lines -->
+        <rect x="100" y="75" width="80" height="8" rx="4" fill="#e5e7eb"/>
+        <rect x="100" y="93" width="120" height="6" rx="3" fill="#f3f4f6"/>
+        <rect x="100" y="107" width="100" height="6" rx="3" fill="#f3f4f6"/>
+        <rect x="100" y="121" width="60"  height="6" rx="3" fill="#f3f4f6"/>
+
+        <!-- Broken link icon on doc -->
+        <circle cx="220" cy="90" r="18" fill="#ede9fe"/>
+        <path d="M213 90 h6 a4 4 0 0 1 0 8 h-2" stroke="#6d28d9" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M227 90 h-6 a4 4 0 0 0 0-8 h2"  stroke="#6d28d9" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <line x1="218" y1="87" x2="222" y2="93" stroke="#a78bfa" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+
+        <!-- Floating small elements -->
+        <circle cx="68"  cy="62"  r="6"  fill="#a78bfa" opacity="0.5" class="float-a"/>
+        <circle cx="252" cy="145" r="5"  fill="#7c3aed" opacity="0.4" class="float-b"/>
+        <rect   x="55"  y="130"  width="12" height="12" rx="3" fill="#ede9fe" transform="rotate(15 55 130)" class="float-c"/>
+        <rect   x="248" y="55"   width="10" height="10" rx="2" fill="#ddd6fe" transform="rotate(-10 248 55)" class="float-a"/>
+
+        <!-- Question mark badge -->
+        <circle cx="160" cy="32" r="18" fill="url(#grad404)"/>
+        <text x="160" y="38" text-anchor="middle" font-size="18" font-weight="700" fill="#fff" font-family="sans-serif">?</text>
+
+        <defs>
+          <linearGradient id="grad404" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#7c3aed"/>
+            <stop offset="100%" stop-color="#6d28d9"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- 404 Number -->
+    <div class="pnf-code">
+      <span class="code-4 code-left">4</span>
+      <span class="code-0">0</span>
+      <span class="code-4 code-right">4</span>
+    </div>
+
+    <!-- Text -->
+    <h1 class="pnf-title">Page Not Found</h1>
+    <p class="pnf-desc">
+      The page you're looking for doesn't exist or has been moved.<br>
+      Please check the URL or head back to the dashboard.
+    </p>
+
+    
+
+    <!-- Footer hint -->
+    <p class="pnf-hint">
+      Error code: <strong>404</strong> &nbsp;·&nbsp; iConnect HRMS
+    </p>
+
+  </div>
+</div>

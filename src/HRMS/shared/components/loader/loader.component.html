@@ -1,0 +1,8 @@
+<div class="hrms-loader" [class]="'size-' + size">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+  @if (message) {
+    <p class="loader-msg">{{ message }}</p>
+  }
+</div>

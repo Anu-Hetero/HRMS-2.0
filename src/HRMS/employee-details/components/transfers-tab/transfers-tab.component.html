@@ -1,0 +1,109 @@
+<div class="tab-content">
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Transfer Details</h3>
+      <button class="btn-add" (click)="addTransfer.emit()">+ Add Transfer Details</button>
+    </div>
+    <div class="table-wrapper">
+      <table class="family-table">
+        <thead>
+          <tr>
+            <th>S.No</th><th>Transfer Type</th><th>Transfer Details</th><th>Business Unit</th>
+            <th>Cost Centre</th><th>Department</th><th>Section</th><th>Designation</th>
+            <th>Work Location</th><th>Transfer Date</th><th>Reporting Date &amp; Time</th>
+            <th>Reporting Officer</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rec of transferRecords; track rec.id; let i = $index) {
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ rec.transferType }}</td>
+              <td>{{ rec.transferDetails }}</td>
+              <td>{{ rec.businessUnit }}</td>
+              <td>{{ rec.costCentre }}</td>
+              <td>{{ rec.department }}</td>
+              <td>{{ rec.section }}</td>
+              <td>{{ rec.designation }}</td>
+              <td>{{ rec.workLocation }}</td>
+              <td>{{ rec.transferDate }}</td>
+              <td>{{ rec.reportingDateAndTime }}</td>
+              <td>{{ rec.reportingOfficer }}</td>
+              <td><button class="btn-icon-edit" (click)="editRecord.emit(rec)">✎</button></td>
+            </tr>
+          }
+          @empty {
+            <tr><td colspan="13" class="empty-row">No transfer records. Click "+ Add Transfer Details" to add one.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TRANSFER MODAL ══════════════ -->
+@if (showTransferModal) {
+  <div class="modal-overlay" (click)="closeModal.emit()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h3>@if (editingTransferId !== null) { Edit Transfer Details } @else { Add Transfer Details }</h3>
+          <div class="modal-subtitle">
+            @if (transferStep === 1) { Step 1 of 2 – Transfer Details }
+            @else { Step 2 of 2 – Action Details }
+          </div>
+        </div>
+        <button class="modal-close" (click)="closeModal.emit()">×</button>
+      </div>
+
+      @if (transferStep === 1) {
+        <form [formGroup]="transferForm" class="modal-body">
+          <div class="field-grid edit-grid">
+            <div class="field-edit"><label>Transfer Type <span class="req">*</span></label><select formControlName="transferType" [class.error-input]="isInvalid(transferForm,'transferType')"><option value="">Select</option>@for (o of transferTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (fieldError(transferForm,'transferType','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Transfer Details <span class="req">*</span></label><select formControlName="transferDetails" [class.error-input]="isInvalid(transferForm,'transferDetails')"><option value="">Select</option>@for (o of transferDetailsOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (fieldError(transferForm,'transferDetails','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Business Unit</label><select formControlName="businessUnit"><option value="">Select</option>@for (o of businessUnitOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Cost Centre</label><select formControlName="costCentre"><option value="">Select</option>@for (o of costCentreOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Department</label><select formControlName="department"><option value="">Select</option>@for (o of departmentOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Section</label><select formControlName="section"><option value="">Select</option>@for (o of sectionOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Designation</label><select formControlName="designation"><option value="">Select</option>@for (o of designationOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Work Location</label><select formControlName="workLocation"><option value="">Select</option>@for (o of headQuarterOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Transfer Date <span class="req">*</span></label><input type="date" formControlName="transferDate" [class.error-input]="isInvalid(transferForm,'transferDate')" />@if (fieldError(transferForm,'transferDate','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Reporting Date &amp; Time</label><select formControlName="reportingDateAndTime"><option value="">Select</option>@for (o of reportingDateTimeOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Reporting Officer</label><input type="text" formControlName="reportingOfficer" /></div>
+            <div class="field-edit"><label>Employee ID</label><input type="text" formControlName="employeeId" /></div>
+            <div class="field-edit"><label>Paysheet Group</label><select formControlName="paysheetGroup"><option value="">Select</option>@for (o of paysheetGroupOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Pay Structure</label><select formControlName="payStructure"><option value="">Select</option>@for (o of payStructureOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit col-span-2"><label>Notes</label><textarea formControlName="notes" rows="2"></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+            <button type="button" class="btn-save-primary" (click)="continueToActionDetails.emit()">Continue to Add Action Details →</button>
+          </div>
+        </form>
+      }
+
+      @if (transferStep === 2) {
+        <form [formGroup]="transferActionForm" (ngSubmit)="saveTransfer.emit()" class="modal-body">
+          <div class="step2-back">
+            <button type="button" class="btn-back" (click)="goBackToStep.emit()">← Back</button>
+            <span class="step2-label">Action Details</span>
+          </div>
+          <div class="field-grid edit-grid">
+            <div class="field-edit"><label>Action Type <span class="req">*</span></label><select formControlName="actionType" [class.error-input]="isInvalid(transferActionForm,'actionType')"><option value="">Select</option>@for (o of actionTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (fieldError(transferActionForm,'actionType','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Action By <span class="req">*</span></label><input type="text" formControlName="actionBy" [class.error-input]="isInvalid(transferActionForm,'actionBy')" />@if (fieldError(transferActionForm,'actionBy','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Action Date <span class="req">*</span></label><input type="date" formControlName="actionDate" [class.error-input]="isInvalid(transferActionForm,'actionDate')" />@if (fieldError(transferActionForm,'actionDate','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit"><label>Document No.</label><input type="text" formControlName="documentNo" /></div>
+            <div class="field-edit"><label>Document Date</label><input type="date" formControlName="documentDate" /></div>
+            <div class="field-edit"><label>Document Source</label><select formControlName="documentSource"><option value="">Select</option>@for (o of documentSourceOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+            <div class="field-edit"><label>Status <span class="req">*</span></label><select formControlName="status" [class.error-input]="isInvalid(transferActionForm,'status')"><option value="">Select</option>@for (o of transferStatusOpts; track o) { <option [value]="o">{{ o }}</option> }</select>@if (fieldError(transferActionForm,'status','required')) { <span class="err">Required</span> }</div>
+            <div class="field-edit col-span-2"><label>Comments</label><textarea formControlName="comments" rows="2"></textarea></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" (click)="closeModal.emit()">Cancel</button>
+            <button type="submit" class="btn-save-primary">Save Transfer Details</button>
+          </div>
+        </form>
+      }
+    </div>
+  </div>
+}

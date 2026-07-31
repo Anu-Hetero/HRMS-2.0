@@ -1,0 +1,378 @@
+<div class="tab-content">
+  <div class="content-header"><h3>Personal Information</h3><p>Add or Edit Employee Personal Information</p></div>
+
+  <!-- Professional -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Professional</h4>
+      @if (!isNew) {
+        @if (!editing['personalProf']) { <button class="btn-edit" (click)="startEdit.emit('personalProf')">Edit</button> }
+        @else { <button class="btn-save" (click)="savePersonalProf.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['personalProf']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Nationality</label><span>{{ displayVal(nationalitySearch) }}</span></div>
+        <div class="field-view"><label>Religion</label><span>{{ displayVal(religionSearch) }}</span></div>
+        <div class="field-view"><label>Blood Group</label><span>{{ displayVal(bloodGroupSearch) }}</span></div>
+        <div class="field-view"><label>Marital Status</label><span>{{ getMaritalStatusName(personalData.professional.maritalStatus) }}</span></div>
+        <!-- <div class="field-view"><label>Marriage Anniversary</label><span>{{ displayVal(personalData.professional.marriageAnniversary) }}</span></div> -->
+      </div>
+    } @else {
+      <form [formGroup]="personalProfForm" class="field-grid edit-grid">
+        <!-- Nationality -->
+        <div class="field-edit">
+          <label>Nationality <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="nationalitySearch" (input)="onNationalityInput($event)" (blur)="hideNationalityDropdownSoon()" (focus)="showNationalityDropdown = true" placeholder="Search nationality..." autocomplete="off" />
+              @if (nationalitySearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearNationality()">×</button> }
+            </div>
+            @if (showNationalityDropdown) {
+              <div class="univ-dropdown-list">
+                @for (n of filteredNationalities; track n.nationalityId) { <div class="univ-option" (mousedown)="selectNationality(n)">{{ n.nationalityName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (personalProfForm.get('nationality')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!personalProfForm.get('nationality')?.value && personalProfForm.get('nationality')?.touched) { <span class="err">Nationality is required</span> }
+        </div>
+        <!-- Religion -->
+        <div class="field-edit">
+          <label>Religion <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="religionSearch" (input)="onReligionInput($event)" (blur)="hideReligionDropdownSoon()" (focus)="showReligionDropdown = true" placeholder="Search religion..." autocomplete="off" />
+              @if (religionSearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearReligion()">×</button> }
+            </div>
+            @if (showReligionDropdown) {
+              <div class="univ-dropdown-list">
+                @for (r of filteredReligions; track r.religionId) { <div class="univ-option" (mousedown)="selectReligion(r)">{{ r.religionName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (personalProfForm.get('religion')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!personalProfForm.get('religion')?.value && personalProfForm.get('religion')?.touched) { <span class="err">Religion is required</span> }
+        </div>
+        <!-- Blood Group -->
+        <div class="field-edit">
+          <label>Blood Group <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="bloodGroupSearch" (input)="onBloodGroupInput($event)" (blur)="hideBloodGroupDropdownSoon()" (focus)="showBloodGroupDropdown = true" placeholder="Search blood group..." autocomplete="off" />
+              @if (bloodGroupSearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearBloodGroup()">×</button> }
+            </div>
+            @if (showBloodGroupDropdown) {
+              <div class="univ-dropdown-list">
+                @for (b of filteredBloodGroups; track b.bloodGroupId) { <div class="univ-option" (mousedown)="selectBloodGroup(b)">{{ b.bloodGroupName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (personalProfForm.get('bloodGroup')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!personalProfForm.get('bloodGroup')?.value && personalProfForm.get('bloodGroup')?.touched) { <span class="err">Blood group is required</span> }
+        </div>
+        <div class="field-edit">
+          <label>Marital Status <span class="req">*</span></label>
+          <select formControlName="maritalStatus" [class.error-input]="isInvalid(personalProfForm,'maritalStatus')">
+            <option value="">Select</option>
+            @for (m of maritalStatuses; track m.maritalId) { <option [value]="m.maritalId">{{ m.maritalName }}</option> }
+          </select>
+          @if (isInvalid(personalProfForm,'maritalStatus')) { <span class="err">Marital status is required</span> }
+        </div>
+        <!-- <div class="field-edit">
+          <label>Marriage Anniversary</label>
+          <hrms-datepicker formControlName="marriageAnniversary" placeholder="Select date"></hrms-datepicker>
+        </div> -->
+      </form>
+    }
+  </div>
+
+  <!-- Previous PF Details -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Previous PF Details</h4>
+      @if (!isNew) {
+        @if (!editing['prevPF']) { <button class="btn-edit" (click)="startEdit.emit('prevPF')">Edit</button> }
+        @else { <button class="btn-save" (click)="savePrevPF.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['prevPF']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Exist</label><span>{{ displayVal(personalData.prevPF.exist) }}</span></div>
+        <div class="field-view"><label>UAN No</label><span>{{ displayVal(personalData.prevPF.uanNo) }}</span></div>
+        <div class="field-view"><label>PF No</label><span>{{ displayVal(personalData.prevPF.pfNo) }}</span></div>
+        <div class="field-view"><label>Bank Name</label><span>{{ displayVal(personalData.prevPF.bankName) }}</span></div>
+        <div class="field-view"><label>IFSC</label><span>{{ displayVal(personalData.prevPF.ifsc) }}</span></div>
+        <div class="field-view"><label>Account No</label><span>{{ displayVal(personalData.prevPF.accountNo) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="prevPFForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Exist <span class="req">*</span></label><select formControlName="exist"><option value="Yes">Yes</option><option value="No">No</option></select></div>
+        <div class="field-edit"><label>UAN No</label><input type="text" formControlName="uanNo" placeholder="12-digit UAN number" appNumbersOnly maxlength="12" />@if (prevPFForm.get('uanNo')?.errors?.['pattern'] && prevPFForm.get('uanNo')?.touched) { <span class="err">UAN No must be 12 digits</span> }</div>
+        <div class="field-edit"><label>PF No</label><input type="text" formControlName="pfNo" appNoLeadingSpace /></div>
+        <div class="field-edit"><label>Bank Name</label><input type="text" formControlName="bankName" appNoLeadingSpace /></div>
+        <div class="field-edit"><label>IFSC</label><input type="text" formControlName="ifsc" placeholder="e.g. SBIN0001234" appNoSpace />@if (prevPFForm.get('ifsc')?.errors?.['pattern'] && prevPFForm.get('ifsc')?.touched) { <span class="err">Enter valid IFSC code</span> }</div>
+        <div class="field-edit"><label>Account No</label><input type="text" formControlName="accountNo" appNumbersOnly /></div>
+      </form>
+    }
+  </div>
+
+  <!-- Native Details -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Native Details</h4>
+      @if (!isNew) {
+        @if (!editing['native']) { <button class="btn-edit" (click)="startEdit.emit('native')">Edit</button> }
+        @else { <button class="btn-save" (click)="saveNative.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['native']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Country</label><span>{{ displayVal(nativeCountrySearch) }}</span></div>
+        <div class="field-view"><label>State</label><span>{{ displayVal(nativeStateSearch) }}</span></div>
+        <div class="field-view"><label>City</label><span>{{ displayVal(nativeCitySearch) }}</span></div>
+        <div class="field-view"><label>Place of Birth</label><span>{{ displayVal(personalData.native.placeOfBirth) }}</span></div>
+        <div class="field-view"><label>DCL As</label><span>{{ getDobTypeName(personalData.native.dclAs) }}</span></div>
+        <div class="field-view"><label>Date of Birth</label><span>{{ displayVal(personalData.native.dateOfBirth) }}</span></div>
+        <div class="field-view"><label>PF/AN Card No</label><span>{{ displayVal(personalData.native.pfanCardNo) }}</span></div>
+        <div class="field-view"><label>Aadhar UID</label><span>{{ displayVal(personalData.native.aadharUID) }}</span></div>
+        <div class="field-view"><label>Name on Aadhar</label><span>{{ displayVal(personalData.native.nameOnAadhar) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="nativeForm" class="field-grid edit-grid">
+        <!-- Country -->
+        <div class="field-edit">
+          <label>Country <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="nativeCountrySearch" (input)="onNativeCountryInput($event)" (blur)="hideNativeCountryDropdownSoon()" (focus)="showNativeCountryDropdown = true" placeholder="Search country..." autocomplete="off" />
+              @if (nativeCountrySearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearNativeCountry()">×</button> }
+            </div>
+            @if (showNativeCountryDropdown) {
+              <div class="univ-dropdown-list">
+                @for (c of filteredNativeCountries; track c.countryId) { <div class="univ-option" (mousedown)="selectNativeCountry(c)">{{ c.countryName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (nativeForm.get('country')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!nativeForm.get('country')?.value && nativeForm.get('country')?.touched) { <span class="err">Country is required</span> }
+        </div>
+        <!-- State -->
+        <div class="field-edit">
+          <label>State <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="nativeStateSearch" (input)="onNativeStateInput($event)" (blur)="hideNativeStateDropdownSoon()" (focus)="showNativeStateDropdown = nativeStates.length > 0" placeholder="Select country first..." autocomplete="off" />
+              @if (nativeStateSearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearNativeState()">×</button> }
+            </div>
+            @if (showNativeStateDropdown) {
+              <div class="univ-dropdown-list">
+                @for (s of filteredNativeStates; track s.stateId) { <div class="univ-option" (mousedown)="selectNativeState(s)">{{ s.stateName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (nativeForm.get('state')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!nativeForm.get('state')?.value && nativeForm.get('state')?.touched) { <span class="err">State is required</span> }
+        </div>
+        <!-- City -->
+        <div class="field-edit">
+          <label>City <span class="req">*</span></label>
+          <div class="univ-search-wrapper">
+            <div class="univ-input-row">
+              <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input class="univ-search-input" type="text" [value]="nativeCitySearch" (input)="onNativeCityInput($event)" (blur)="hideNativeCityDropdownSoon()" (focus)="showNativeCityDropdown = nativeCities.length > 0" placeholder="Select state first..." autocomplete="off" />
+              @if (nativeCitySearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearNativeCity()">×</button> }
+            </div>
+            @if (showNativeCityDropdown) {
+              <div class="univ-dropdown-list">
+                @for (c of filteredNativeCities; track c.cityId) { <div class="univ-option" (mousedown)="selectNativeCity(c)">{{ c.cityName }}</div> }
+                @empty { <div class="univ-no-results">No results</div> }
+              </div>
+            }
+          </div>
+          @if (nativeForm.get('city')?.value) { <span class="univ-selected-badge">✓ Selected</span> }
+          @if (!nativeForm.get('city')?.value && nativeForm.get('city')?.touched) { <span class="err">City is required</span> }
+        </div>
+        <div class="field-edit">
+          <label>Place of Birth <span class="req">*</span></label>
+          <input type="text" formControlName="placeOfBirth" appNoLeadingSpace [class.error-input]="isInvalid(nativeForm,'placeOfBirth')" />
+          @if (isInvalid(nativeForm,'placeOfBirth')) { <span class="err">Enter valid place of birth (letters only)</span> }
+        </div>
+        <div class="field-edit">
+          <label>DCL As <span class="req">*</span></label>
+          <select formControlName="dclAs" [class.error-input]="isInvalid(nativeForm,'dclAs')">
+            <option value="">Select</option>
+            @for (d of dobTypes; track d.dobTypeId) { <option [value]="d.dobTypeId">{{ d.dobTypeName }}</option> }
+          </select>
+          @if (isInvalid(nativeForm,'dclAs')) { <span class="err">DCL As is required</span> }
+        </div>
+        <div class="field-edit">
+          <label>Date of Birth <span class="req">*</span></label>
+          <hrms-datepicker formControlName="dateOfBirth" placeholder="Select date of birth"
+            [class.error-input]="isInvalid(nativeForm,'dateOfBirth')"></hrms-datepicker>
+          @if (isInvalid(nativeForm,'dateOfBirth')) { <span class="err">Date of birth is required</span> }
+        </div>
+        <div class="field-edit col-span-2"><label>Address Lane 1</label><input type="text" formControlName="addressLane1" appNoLeadingSpace /></div>
+        <div class="field-edit">
+          <label>Passport No</label>
+          <input type="text" formControlName="passportNo" appNoSpace [class.error-input]="isInvalid(nativeForm,'passportNo')" />
+          @if (isInvalid(nativeForm,'passportNo')) { <span class="err">Enter valid passport no (e.g. A1234567)</span> }
+        </div>
+        <div class="field-edit">
+          <label>PF/AN Card No (PAN)</label>
+          <input type="text" formControlName="pfanCardNo" appNoSpace [class.error-input]="isInvalid(nativeForm,'pfanCardNo')" />
+          @if (isInvalid(nativeForm,'pfanCardNo')) { <span class="err">Enter valid PAN (e.g. ABCDE1234F)</span> }
+        </div>
+        <div class="field-edit"><label>Driving License No</label><input type="text" formControlName="drivingLicenseNo" appNoLeadingSpace /></div>
+        <div class="field-edit">
+          <label>Aadhar Card No</label>
+          <input type="text" formControlName="aadharCardNo" appNumbersOnly maxlength="12" [class.error-input]="isInvalid(nativeForm,'aadharCardNo')" />
+          @if (isInvalid(nativeForm,'aadharCardNo')) { <span class="err">Aadhar must be 12 digits</span> }
+        </div>
+        <div class="field-edit">
+          <label>Aadhar UID</label>
+          <input type="text" formControlName="aadharUID" appNumbersOnly [class.error-input]="isInvalid(nativeForm,'aadharUID')" />
+          @if (isInvalid(nativeForm,'aadharUID')) { <span class="err">Aadhar UID must be 16 digits</span> }
+        </div>
+        <div class="field-edit">
+          <label>Name on Aadhar</label>
+          <input type="text" formControlName="nameOnAadhar" appLettersOnly [class.error-input]="isInvalid(nativeForm,'nameOnAadhar')" />
+          @if (isInvalid(nativeForm,'nameOnAadhar')) { <span class="err">Name must contain letters only</span> }
+        </div>
+      </form>
+    }
+  </div>
+
+  <!-- Health Information -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Health Information</h4>
+      @if (!isNew) {
+        @if (!editing['health']) { <button class="btn-edit" (click)="startEdit.emit('health')">Edit</button> }
+        @else { <button class="btn-save" (click)="saveHealth.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['health']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Height (in CMs)</label><span>{{ displayVal(personalData.health.heightCms) }}</span></div>
+        <div class="field-view"><label>Weight (in Kgs)</label><span>{{ displayVal(personalData.health.weightKgs) }}</span></div>
+        <div class="field-view"><label>Any Major Surgery/Illness/Allergies</label><span>{{ displayVal(personalData.health.majorSurgery) }}</span></div>
+        <div class="field-view"><label>Power of Glass (Left)</label><span>{{ displayVal(personalData.health.powerOfGlassLeft) }}</span></div>
+        <div class="field-view"><label>Power of Glass (Right)</label><span>{{ displayVal(personalData.health.powerOfGlassRight) }}</span></div>
+        <div class="field-view col-span-full"><label>Have you ever been convicted in any court of law?</label><span>{{ displayVal(personalData.health.convictedCourt) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="healthForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Height (in CMs)</label><input type="number" formControlName="heightCms" min="50" max="300" />@if (isInvalid(healthForm,'heightCms')) { <span class="err">Enter valid height (50–300 cm)</span> }</div>
+        <div class="field-edit"><label>Weight (in Kgs)</label><input type="number" formControlName="weightKgs" min="10" max="500" />@if (isInvalid(healthForm,'weightKgs')) { <span class="err">Enter valid weight</span> }</div>
+        <div class="field-edit"><label>Any Major Surgery/Illness/Allergies</label><select formControlName="majorSurgery"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+        <div class="field-edit"><label>Power of Glass (Left)</label><input type="text" formControlName="powerOfGlassLeft" placeholder="e.g. -1.5" /></div>
+        <div class="field-edit"><label>Power of Glass (Right)</label><input type="text" formControlName="powerOfGlassRight" placeholder="e.g. -1.5" /></div>
+        <div class="field-edit col-span-2"><label>Convicted in any court of law? <span class="req">*</span></label><select formControlName="convictedCourt"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+        <div class="field-edit col-span-2"><label>Membership with professional body/organization? <span class="req">*</span></label><select formControlName="professionalBodyMembership"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+      </form>
+    }
+  </div>
+
+  <!-- Identification Marks -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Identification Marks</h4>
+      @if (!isNew) {
+        @if (!editing['idMarks']) { <button class="btn-edit" (click)="startEdit.emit('idMarks')">Edit</button> }
+        @else { <button class="btn-save" (click)="saveIdMarks.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['idMarks']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Identification 01</label><span>{{ displayVal(personalData.idMarks.id1) }}</span></div>
+        <div class="field-view"><label>Identification 02</label><span>{{ displayVal(personalData.idMarks.id2) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="idMarksForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Identification 01</label><input type="text" formControlName="id1" appNoLeadingSpace /></div>
+        <div class="field-edit"><label>Identification 02</label><input type="text" formControlName="id2" appNoLeadingSpace /></div>
+      </form>
+    }
+  </div>
+
+  <!-- Language Known -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Language Known</h4>
+      @if (!isNew) {
+        <button class="btn-add" type="button" (click)="toggleAddLanguageForm()">
+          {{ showAddLanguageForm ? 'Cancel' : '+ Add Language' }}
+        </button>
+      }
+    </div>
+
+    <!-- Add Language inline form -->
+    @if (showAddLanguageForm) {
+      <div class="add-lang-form">
+        <div class="field-grid edit-grid">
+          <div class="field-edit">
+            <label>Language <span class="req">*</span></label>
+            <div class="univ-search-wrapper" [class.error-input]="addLangTouched && !addLangId">
+              <div class="univ-input-row">
+                <svg class="univ-search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input class="univ-search-input" type="text" [value]="addLangSearch" (input)="onAddLangInput($event)" (blur)="hideAddLangDropdownSoon()" (focus)="showAddLangDropdown = true" placeholder="Search language..." autocomplete="off" />
+                @if (addLangSearch) { <button class="univ-clear-btn" type="button" (mousedown)="$event.preventDefault(); clearAddLang()">×</button> }
+              </div>
+              @if (addLangId) { <span class="univ-selected-badge">✓ Selected</span> }
+              @if (showAddLangDropdown) {
+                <div class="univ-dropdown-list">
+                  @for (l of filteredAddLanguages; track l.languageId) { <div class="univ-option" (mousedown)="selectAddLang(l)">{{ l.languageName }}</div> }
+                  @empty { <div class="univ-no-results">No results</div> }
+                </div>
+              }
+            </div>
+            @if (addLangTouched && !addLangId) { <span class="err">Language is required</span> }
+          </div>
+          <div class="field-edit">
+            <label>Proficiency</label>
+            <div class="checkbox-row">
+              <label class="checkbox-label"><input type="checkbox" [checked]="addLangRead" (change)="addLangRead = $any($event.target).checked" /><span class="checkbox-text">Read</span></label>
+              <label class="checkbox-label"><input type="checkbox" [checked]="addLangWrite" (change)="addLangWrite = $any($event.target).checked" /><span class="checkbox-text">Write</span></label>
+              <label class="checkbox-label"><input type="checkbox" [checked]="addLangSpeak" (change)="addLangSpeak = $any($event.target).checked" /><span class="checkbox-text">Speak</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="lang-form-actions">
+          <button class="btn-save" type="button" (click)="submitAddLanguage()">Save Language</button>
+        </div>
+      </div>
+    }
+
+    <!-- Language list -->
+    <div class="lang-list">
+      @for (lang of languageList; track lang.languageId) {
+        <div class="lang-row">
+          <span class="lang-row-name">{{ getLanguageName(lang.languageId) }}</span>
+          <div class="lang-flags">
+            <span class="lang-flag" [class.on]="lang.canRead === 1">Read</span>
+            <span class="lang-flag" [class.on]="lang.canWrite === 1">Write</span>
+            <span class="lang-flag" [class.on]="lang.canSpeak === 1">Speak</span>
+          </div>
+          <button class="btn-icon-delete" type="button" title="Remove language" (click)="deleteLanguage.emit(lang.languageId)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      }
+      @empty {
+        <p class="no-lang-msg">No languages added yet.</p>
+      }
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,402 @@
+<div class="tab-content">
+  <div class="content-header"><h3>Contact Details</h3><p>Add or Edit Employee Contact Details</p></div>
+
+  <!-- Professional Contact -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Professional</h4>
+      @if (!isNew) {
+        @if (!editing['profContact']) { <button class="btn-edit" (click)="startEdit.emit('profContact')">Edit</button> }
+        @else { <button class="btn-save" (click)="saveProfContact.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['profContact']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Phone</label><span>{{ displayVal(contactData.professional.phone) }}</span></div>
+        <div class="field-view"><label>Ext</label><span>{{ displayVal(contactData.professional.ext) }}</span></div>
+        <div class="field-view"><label>Mobile Number</label><span>{{ displayVal(contactData.professional.mobileNumber) }}</span></div>
+        <div class="field-view"><label>Email Address</label><span>{{ displayVal(contactData.professional.emailAddress) }}</span></div>
+        <div class="field-view"><label>Address Lane 1</label><span>{{ displayVal(contactData.professional.addressLane1) }}</span></div>
+        <div class="field-view"><label>Address Lane 2</label><span>{{ displayVal(contactData.professional.addressLane2) }}</span></div>
+        <div class="field-view"><label>Country</label><span>{{ getCountryName(contactData.professional.country) }}</span></div>
+        <div class="field-view"><label>State</label><span>{{ getStateName('prof', contactData.professional.state) }}</span></div>
+        <div class="field-view"><label>City</label><span>{{ getCityName('prof', contactData.professional.city) }}</span></div>
+        <div class="field-view"><label>Pin code</label><span>{{ displayVal(contactData.professional.pinCode) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="profContactForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Phone</label><input type="tel" formControlName="phone" placeholder="10-digit phone number" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" [class.error-input]="isInvalid(profContactForm,'phone')" />@if (fieldError(profContactForm,'phone','pattern')) { <span class="err">Enter valid 10-digit phone number</span> }</div>
+        <div class="field-edit"><label>Ext</label><input type="text" formControlName="ext" placeholder="e.g. 021" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" [class.error-input]="isInvalid(profContactForm,'ext')" />@if (fieldError(profContactForm,'ext','pattern')) { <span class="err">Enter valid extension (digits only)</span> }</div>
+        <div class="field-edit"><label>Mobile Number <span class="req">*</span></label><input type="tel" formControlName="mobileNumber" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" [class.error-input]="isInvalid(profContactForm,'mobileNumber')" />@if (fieldError(profContactForm,'mobileNumber','required')) { <span class="err">Mobile number is required</span> }@if (fieldError(profContactForm,'mobileNumber','pattern')) { <span class="err">Enter valid 10-digit mobile number</span> }</div>
+        <div class="field-edit"><label>Email Address <span class="req">*</span></label><input type="email" formControlName="emailAddress" placeholder="email@example.com" appNoSpace [class.error-input]="isInvalid(profContactForm,'emailAddress')" />@if (fieldError(profContactForm,'emailAddress','required')) { <span class="err">Email address is required</span> }@if (fieldError(profContactForm,'emailAddress','email')) { <span class="err">Enter a valid email address</span> }</div>
+        <div class="field-edit col-span-2"><label>Address Lane 1 <span class="req">*</span></label><input type="text" formControlName="addressLane1" placeholder="House / Flat / Street" appNoLeadingSpace [class.error-input]="isInvalid(profContactForm,'addressLane1')" />@if (fieldError(profContactForm,'addressLane1','required')) { <span class="err">Address is required</span> }</div>
+        <div class="field-edit"><label>Address Lane 2</label><input type="text" formControlName="addressLane2" placeholder="Locality / Area" appNoLeadingSpace /></div>
+        <!-- Country typeahead -->
+        <div class="field-edit">
+          <label>Country <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(profContactForm,'country')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['prof'].country"
+                     (input)="contactSearch['prof'].country = $any($event.target).value; contactDropdownOpen['prof'].country = true"
+                     (focus)="contactDropdownOpen['prof'].country = true"
+                     (blur)="hideContactDropdown('prof','country')"
+                     placeholder="Search country…" />
+              @if (contactSearch['prof'].country) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'prof',field:'country',form:profContactForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['prof'].country) {
+              <div class="univ-dropdown-list">
+                @for (c of getFilteredCountries('prof'); track c.countryId) {
+                  <div class="univ-option" [class.univ-option-active]="profContactForm.get('country')?.value == c.countryId"
+                       (mousedown)="selectCountry.emit({section:'prof',country:c,form:profContactForm})">{{ c.countryName }}</div>
+                }
+                @if (!getFilteredCountries('prof').length) { <div class="univ-no-results">No countries found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(profContactForm,'country')) { <span class="err">Country is required</span> }
+        </div>
+        <!-- State typeahead -->
+        <div class="field-edit">
+          <label>State <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(profContactForm,'state')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['prof'].state"
+                     (input)="contactSearch['prof'].state = $any($event.target).value; contactDropdownOpen['prof'].state = true"
+                     (focus)="contactDropdownOpen['prof'].state = true"
+                     (blur)="hideContactDropdown('prof','state')"
+                     placeholder="Search state…" />
+              @if (contactSearch['prof'].state) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'prof',field:'state',form:profContactForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['prof'].state) {
+              <div class="univ-dropdown-list">
+                @for (s of getFilteredStates('prof'); track s.stateId) {
+                  <div class="univ-option" [class.univ-option-active]="profContactForm.get('state')?.value == s.stateId"
+                       (mousedown)="selectState.emit({section:'prof',state:s,form:profContactForm})">{{ s.stateName }}</div>
+                }
+                @if (!getFilteredStates('prof').length) { <div class="univ-no-results">No states found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(profContactForm,'state')) { <span class="err">State is required</span> }
+        </div>
+        <!-- City typeahead -->
+        <div class="field-edit">
+          <label>City <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(profContactForm,'city')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['prof'].city"
+                     (input)="contactSearch['prof'].city = $any($event.target).value; contactDropdownOpen['prof'].city = true"
+                     (focus)="contactDropdownOpen['prof'].city = true"
+                     (blur)="hideContactDropdown('prof','city')"
+                     placeholder="Search city…" />
+              @if (contactSearch['prof'].city) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'prof',field:'city',form:profContactForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['prof'].city) {
+              <div class="univ-dropdown-list">
+                @for (c of getFilteredCities('prof'); track c.cityId) {
+                  <div class="univ-option" [class.univ-option-active]="profContactForm.get('city')?.value == c.cityId"
+                       (mousedown)="selectCity.emit({section:'prof',city:c,form:profContactForm})">{{ c.cityName }}</div>
+                }
+                @if (!getFilteredCities('prof').length) { <div class="univ-no-results">No cities found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(profContactForm,'city')) { <span class="err">City is required</span> }
+        </div>
+        <div class="field-edit"><label>Pin Code</label><input type="text" formControlName="pinCode" placeholder="6-digit PIN" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" [class.error-input]="isInvalid(profContactForm,'pinCode')" />@if (fieldError(profContactForm,'pinCode','pattern')) { <span class="err">Enter valid 6-digit PIN code</span> }</div>
+      </form>
+    }
+  </div>
+
+  <!-- Personal Contact -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Personal</h4>
+      @if (!isNew) {
+        @if (!editing['persContact']) { <button class="btn-edit" (click)="startEdit.emit('persContact')">Edit</button> }
+        @else { <button class="btn-save" (click)="savePersContact.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['persContact']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Phone</label><span>{{ displayVal(contactData.personal.phone) }}</span></div>
+        <div class="field-view"><label>Ext</label><span>{{ displayVal(contactData.personal.ext) }}</span></div>
+        <div class="field-view"><label>Mobile Number</label><span>{{ displayVal(contactData.personal.mobileNumber) }}</span></div>
+        <div class="field-view"><label>Email Address</label><span>{{ displayVal(contactData.personal.emailAddress) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="persContactForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Phone</label><input type="tel" formControlName="phone" placeholder="10-digit phone number" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" /></div>
+        <div class="field-edit"><label>Ext</label><input type="text" formControlName="ext" placeholder="e.g. 021" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" /></div>
+        <div class="field-edit"><label>Mobile Number</label><input type="tel" formControlName="mobileNumber" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" /></div>
+        <div class="field-edit"><label>Email Address</label><input type="email" formControlName="emailAddress" placeholder="email@example.com" appNoSpace /></div>
+      </form>
+    }
+  </div>
+
+  <!-- Communication Address (read-only) -->
+  <div class="section-card">
+    <div class="section-header"><h4>Communication Address</h4></div>
+    <div class="field-grid">
+      <div class="field-view"><label>Address Lane 1</label><span>{{ displayVal(contactData.commAddress.addressLane1) }}</span></div>
+      <div class="field-view"><label>Address Lane 2</label><span>{{ displayVal(contactData.commAddress.addressLane2) }}</span></div>
+      <div class="field-view"><label>Address Lane 3</label><span>{{ displayVal(contactData.commAddress.addressLane3) }}</span></div>
+      <div class="field-view"><label>Address Lane 4</label><span>{{ displayVal(contactData.commAddress.addressLane4) }}</span></div>
+      <div class="field-view"><label>Country</label><span>{{ getCountryName(contactData.commAddress.country) }}</span></div>
+      <div class="field-view"><label>State</label><span>{{ getStateName('comm', contactData.commAddress.state) }}</span></div>
+      <div class="field-view"><label>City</label><span>{{ getCityName('comm', contactData.commAddress.city) }}</span></div>
+      <div class="field-view"><label>Pin code</label><span>{{ displayVal(contactData.commAddress.pinCode) }}</span></div>
+    </div>
+  </div>
+
+  <!-- Permanent Address -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>Permanent Address</h4>
+      @if (!isNew) {
+        @if (!editing['permAddress']) { <button class="btn-edit" (click)="startEdit.emit('permAddress')">Edit</button> }
+        @else { <button class="btn-save" (click)="savePermAddress.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['permAddress']) {
+      @if (contactData.permAddress.sameAsCurrent) {
+        <div class="same-badge"><span class="checkbox-on">✓</span> Same as Current Address</div>
+      }
+      <div class="field-grid">
+        <div class="field-view"><label>Address Lane 1</label><span>{{ displayVal(contactData.permAddress.addressLane1) }}</span></div>
+        <div class="field-view"><label>Address Lane 2</label><span>{{ displayVal(contactData.permAddress.addressLane2) }}</span></div>
+        <div class="field-view"><label>Country</label><span>{{ getCountryName(contactData.permAddress.country) }}</span></div>
+        <div class="field-view"><label>State</label><span>{{ getStateName('perm', contactData.permAddress.state) }}</span></div>
+        <div class="field-view"><label>City</label><span>{{ getCityName('perm', contactData.permAddress.city) }}</span></div>
+        <div class="field-view"><label>Pin code</label><span>{{ displayVal(contactData.permAddress.pinCode) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="permAddressForm" class="field-grid edit-grid">
+        <div class="field-edit col-span-full"><label class="checkbox-label"><input type="checkbox" formControlName="sameAsCurrent" (change)="sameAsCurrentChange.emit()" /><span class="checkbox-text">Same as Current Address</span></label></div>
+        <div class="field-edit col-span-2"><label>Address Lane 1 <span class="req">*</span></label><input type="text" formControlName="addressLane1" placeholder="House / Flat / Street" appNoLeadingSpace [class.error-input]="isInvalid(permAddressForm,'addressLane1')" />@if (fieldError(permAddressForm,'addressLane1','required')) { <span class="err">Address is required</span> }</div>
+        <div class="field-edit"><label>Address Lane 2</label><input type="text" formControlName="addressLane2" placeholder="Locality / Area" appNoLeadingSpace /></div>
+        <div class="field-edit"><label>Address Lane 3</label><input type="text" formControlName="addressLane3" placeholder="Landmark" appNoLeadingSpace /></div>
+        <div class="field-edit"><label>Address Lane 4</label><input type="text" formControlName="addressLane4" placeholder="City / Town" appNoLeadingSpace /></div>
+        <!-- Country -->
+        <div class="field-edit">
+          <label>Country <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(permAddressForm,'country')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['perm'].country"
+                     (input)="contactSearch['perm'].country = $any($event.target).value; contactDropdownOpen['perm'].country = true"
+                     (focus)="contactDropdownOpen['perm'].country = true"
+                     (blur)="hideContactDropdown('perm','country')"
+                     placeholder="Search country…" />
+              @if (contactSearch['perm'].country) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'perm',field:'country',form:permAddressForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['perm'].country) {
+              <div class="univ-dropdown-list">
+                @for (c of getFilteredCountries('perm'); track c.countryId) {
+                  <div class="univ-option" [class.univ-option-active]="permAddressForm.get('country')?.value == c.countryId"
+                       (mousedown)="selectCountry.emit({section:'perm',country:c,form:permAddressForm})">{{ c.countryName }}</div>
+                }
+                @if (!getFilteredCountries('perm').length) { <div class="univ-no-results">No countries found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(permAddressForm,'country')) { <span class="err">Country is required</span> }
+        </div>
+        <!-- State -->
+        <div class="field-edit">
+          <label>State <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(permAddressForm,'state')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['perm'].state"
+                     (input)="contactSearch['perm'].state = $any($event.target).value; contactDropdownOpen['perm'].state = true"
+                     (focus)="contactDropdownOpen['perm'].state = true"
+                     (blur)="hideContactDropdown('perm','state')"
+                     placeholder="Search state…" />
+              @if (contactSearch['perm'].state) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'perm',field:'state',form:permAddressForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['perm'].state) {
+              <div class="univ-dropdown-list">
+                @for (s of getFilteredStates('perm'); track s.stateId) {
+                  <div class="univ-option" [class.univ-option-active]="permAddressForm.get('state')?.value == s.stateId"
+                       (mousedown)="selectState.emit({section:'perm',state:s,form:permAddressForm})">{{ s.stateName }}</div>
+                }
+                @if (!getFilteredStates('perm').length) { <div class="univ-no-results">No states found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(permAddressForm,'state')) { <span class="err">State is required</span> }
+        </div>
+        <!-- City -->
+        <div class="field-edit">
+          <label>City <span class="req">*</span></label>
+          <div class="univ-search-wrapper" [class.error-input]="isInvalid(permAddressForm,'city')">
+            <div class="univ-input-row">
+              <input type="text" class="univ-search-input" autocomplete="off"
+                     [value]="contactSearch['perm'].city"
+                     (input)="contactSearch['perm'].city = $any($event.target).value; contactDropdownOpen['perm'].city = true"
+                     (focus)="contactDropdownOpen['perm'].city = true"
+                     (blur)="hideContactDropdown('perm','city')"
+                     placeholder="Search city…" />
+              @if (contactSearch['perm'].city) {
+                <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'perm',field:'city',form:permAddressForm})">×</button>
+              }
+            </div>
+            @if (contactDropdownOpen['perm'].city) {
+              <div class="univ-dropdown-list">
+                @for (c of getFilteredCities('perm'); track c.cityId) {
+                  <div class="univ-option" [class.univ-option-active]="permAddressForm.get('city')?.value == c.cityId"
+                       (mousedown)="selectCity.emit({section:'perm',city:c,form:permAddressForm})">{{ c.cityName }}</div>
+                }
+                @if (!getFilteredCities('perm').length) { <div class="univ-no-results">No cities found</div> }
+              </div>
+            }
+          </div>
+          @if (isInvalid(permAddressForm,'city')) { <span class="err">City is required</span> }
+        </div>
+        <div class="field-edit"><label>Pin Code</label><input type="text" formControlName="pinCode" placeholder="6-digit PIN" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" [class.error-input]="isInvalid(permAddressForm,'pinCode')" />@if (fieldError(permAddressForm,'pinCode','pattern')) { <span class="err">Enter valid 6-digit PIN code</span> }</div>
+      </form>
+    }
+  </div>
+
+  <!-- ICE -->
+  <div class="section-card">
+    <div class="section-header">
+      <h4>ICE – In Case of Emergency</h4>
+      @if (!isNew) {
+        @if (!editing['ice']) { <button class="btn-edit" (click)="startEdit.emit('ice')">Edit</button> }
+        @else { <button class="btn-save" (click)="saveIce.emit()">Save</button> }
+      }
+    </div>
+    @if (!editing['ice']) {
+      <div class="field-grid">
+        <div class="field-view"><label>Relation</label><span>{{ getRelationName(contactData.ice.relation) }}</span></div>
+        <div class="field-view"><label>Full Name</label><span>{{ displayVal((contactData.ice.firstName + ' ' + contactData.ice.lastName).trim()) }}</span></div>
+        <div class="field-view"><label>Phone</label><span>{{ displayVal(contactData.ice.phone) }}</span></div>
+        <div class="field-view"><label>Ext</label><span>{{ displayVal(contactData.ice.ext) }}</span></div>
+        <div class="field-view"><label>Mobile Number</label><span>{{ displayVal(contactData.ice.mobileNumber) }}</span></div>
+        <div class="field-view"><label>Email Address</label><span>{{ displayVal(contactData.ice.emailAddress) }}</span></div>
+        @if (contactData.ice.addressLane1) { <div class="field-view"><label>Address Lane 1</label><span>{{ contactData.ice.addressLane1 }}</span></div> }
+        @if (contactData.ice.addressLane2) { <div class="field-view"><label>Address Lane 2</label><span>{{ contactData.ice.addressLane2 }}</span></div> }
+        <div class="field-view"><label>Country</label><span>{{ getCountryName(contactData.ice.country) }}</span></div>
+        <div class="field-view"><label>State</label><span>{{ getStateName('ice', contactData.ice.state) }}</span></div>
+        <div class="field-view"><label>City</label><span>{{ getCityName('ice', contactData.ice.city) }}</span></div>
+        <div class="field-view"><label>Pin code</label><span>{{ displayVal(contactData.ice.pinCode) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="iceForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Relation <span class="req">*</span></label><select formControlName="relation"><option value="">Select Relation</option>@for (r of relations; track r.relationId) { <option [value]="r.relationId">{{ r.relationName }}</option> }</select></div>
+        <div class="field-edit"><label>First Name <span class="req">*</span></label><input type="text" formControlName="firstName" placeholder="e.g. Ravi" appLettersOnly [class.error-input]="isInvalid(iceForm,'firstName')" />@if (fieldError(iceForm,'firstName','required')) { <span class="err">First name is required</span> }</div>
+        <div class="field-edit"><label>Last Name <span class="req">*</span></label><input type="text" formControlName="lastName" placeholder="e.g. Kumar" appLettersOnly [class.error-input]="isInvalid(iceForm,'lastName')" />@if (fieldError(iceForm,'lastName','required')) { <span class="err">Last name is required</span> }</div>
+        <div class="field-edit"><label>Phone</label><input type="tel" formControlName="phone" placeholder="10-digit phone number" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" /></div>
+        <div class="field-edit"><label>Ext</label><input type="text" formControlName="ext" placeholder="e.g. 021" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" /></div>
+        <div class="field-edit"><label>Mobile Number</label><input type="tel" formControlName="mobileNumber" placeholder="10-digit mobile" maxlength="10" inputmode="numeric" appFourDigitYear [maxDigits]="10" /></div>
+        <div class="field-edit"><label>Email Address</label><input type="email" formControlName="emailAddress" placeholder="email@example.com" appNoSpace /></div>
+        <div class="field-edit col-span-full">
+          <label>Address Mode</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" formControlName="addressMode" value="current" (change)="iceAddressModeChange.emit()" />Same as Current Address</label>
+            <label class="radio-label"><input type="radio" formControlName="addressMode" value="permanent" (change)="iceAddressModeChange.emit()" />Same as Permanent Address</label>
+            <label class="radio-label"><input type="radio" formControlName="addressMode" value="custom" (change)="iceAddressModeChange.emit()" />Custom</label>
+          </div>
+        </div>
+        @if (iceForm.get('addressMode')?.value === 'custom') {
+          <div class="field-edit col-span-2"><label>Address Lane 1</label><input type="text" formControlName="addressLane1" placeholder="House / Flat / Street" appNoLeadingSpace /></div>
+          <div class="field-edit"><label>Address Lane 2</label><input type="text" formControlName="addressLane2" placeholder="Locality / Area" appNoLeadingSpace /></div>
+          <!-- Country ICE -->
+          <div class="field-edit">
+            <label>Country</label>
+            <div class="univ-search-wrapper">
+              <div class="univ-input-row">
+                <input type="text" class="univ-search-input" autocomplete="off"
+                       [value]="contactSearch['ice'].country"
+                       (input)="contactSearch['ice'].country = $any($event.target).value; contactDropdownOpen['ice'].country = true"
+                       (focus)="contactDropdownOpen['ice'].country = true"
+                       (blur)="hideContactDropdown('ice','country')"
+                       placeholder="Search country…" />
+                @if (contactSearch['ice'].country) {
+                  <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'ice',field:'country',form:iceForm})">×</button>
+                }
+              </div>
+              @if (contactDropdownOpen['ice'].country) {
+                <div class="univ-dropdown-list">
+                  @for (c of getFilteredCountries('ice'); track c.countryId) {
+                    <div class="univ-option" [class.univ-option-active]="iceForm.get('country')?.value == c.countryId"
+                         (mousedown)="selectCountry.emit({section:'ice',country:c,form:iceForm})">{{ c.countryName }}</div>
+                  }
+                  @if (!getFilteredCountries('ice').length) { <div class="univ-no-results">No countries found</div> }
+                </div>
+              }
+            </div>
+          </div>
+          <!-- State ICE -->
+          <div class="field-edit">
+            <label>State</label>
+            <div class="univ-search-wrapper">
+              <div class="univ-input-row">
+                <input type="text" class="univ-search-input" autocomplete="off"
+                       [value]="contactSearch['ice'].state"
+                       (input)="contactSearch['ice'].state = $any($event.target).value; contactDropdownOpen['ice'].state = true"
+                       (focus)="contactDropdownOpen['ice'].state = true"
+                       (blur)="hideContactDropdown('ice','state')"
+                       placeholder="Search state…" />
+                @if (contactSearch['ice'].state) {
+                  <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'ice',field:'state',form:iceForm})">×</button>
+                }
+              </div>
+              @if (contactDropdownOpen['ice'].state) {
+                <div class="univ-dropdown-list">
+                  @for (s of getFilteredStates('ice'); track s.stateId) {
+                    <div class="univ-option" [class.univ-option-active]="iceForm.get('state')?.value == s.stateId"
+                         (mousedown)="selectState.emit({section:'ice',state:s,form:iceForm})">{{ s.stateName }}</div>
+                  }
+                  @if (!getFilteredStates('ice').length) { <div class="univ-no-results">No states found</div> }
+                </div>
+              }
+            </div>
+          </div>
+          <!-- City ICE -->
+          <div class="field-edit">
+            <label>City</label>
+            <div class="univ-search-wrapper">
+              <div class="univ-input-row">
+                <input type="text" class="univ-search-input" autocomplete="off"
+                       [value]="contactSearch['ice'].city"
+                       (input)="contactSearch['ice'].city = $any($event.target).value; contactDropdownOpen['ice'].city = true"
+                       (focus)="contactDropdownOpen['ice'].city = true"
+                       (blur)="hideContactDropdown('ice','city')"
+                       placeholder="Search city…" />
+                @if (contactSearch['ice'].city) {
+                  <button type="button" class="univ-clear-btn" (click)="clearContactField.emit({section:'ice',field:'city',form:iceForm})">×</button>
+                }
+              </div>
+              @if (contactDropdownOpen['ice'].city) {
+                <div class="univ-dropdown-list">
+                  @for (c of getFilteredCities('ice'); track c.cityId) {
+                    <div class="univ-option" [class.univ-option-active]="iceForm.get('city')?.value == c.cityId"
+                         (mousedown)="selectCity.emit({section:'ice',city:c,form:iceForm})">{{ c.cityName }}</div>
+                  }
+                  @if (!getFilteredCities('ice').length) { <div class="univ-no-results">No cities found</div> }
+                </div>
+              }
+            </div>
+          </div>
+          <div class="field-edit"><label>Pin Code</label><input type="text" formControlName="pinCode" placeholder="6-digit PIN" maxlength="6" inputmode="numeric" appFourDigitYear [maxDigits]="6" /></div>
+        }
+      </form>
+    }
+  </div>
+</div>

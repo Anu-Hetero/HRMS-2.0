@@ -1,0 +1,109 @@
+<div class="se-page">
+
+  <!-- Decorative background -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="dot-grid"></div>
+
+  <div class="se-card">
+
+    <!-- SVG Illustration: broken server -->
+    <div class="se-illustration">
+      <svg viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Ground shadow -->
+        <ellipse cx="160" cy="192" rx="88" ry="8" fill="#fde8d8" opacity="0.6"/>
+
+        <!-- Server rack base -->
+        <rect x="90" y="70" width="140" height="105" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+
+        <!-- Server unit 1 -->
+        <rect x="100" y="80" width="120" height="26" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+        <circle cx="116" cy="93" r="5" fill="#dc2626" class="blink"/>
+        <rect x="128" y="89" width="50" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="128" y="95" width="34" height="3" rx="1.5" fill="#f3f4f6"/>
+        <rect x="196" y="87" width="14" height="12" rx="3" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+
+        <!-- Server unit 2 -->
+        <rect x="100" y="114" width="120" height="26" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+        <circle cx="116" cy="127" r="5" fill="#f97316" class="blink-slow"/>
+        <rect x="128" y="123" width="44" height="4" rx="2" fill="#e5e7eb"/>
+        <rect x="128" y="129" width="30" height="3" rx="1.5" fill="#f3f4f6"/>
+        <rect x="196" y="121" width="14" height="12" rx="3" fill="#fff7ed" stroke="#fdba74" stroke-width="1"/>
+
+        <!-- Server unit 3 (ok) -->
+        <rect x="100" y="148" width="120" height="18" rx="5" fill="#f9fafb" stroke="#e5e7eb" stroke-width="1"/>
+        <circle cx="116" cy="157" r="4" fill="#16a34a"/>
+        <rect x="128" y="154" width="55" height="3.5" rx="1.75" fill="#e5e7eb"/>
+        <rect x="128" y="159" width="36" height="2.5" rx="1.25" fill="#f3f4f6"/>
+
+        <!-- Lightning bolt (error) on top -->
+        <circle cx="160" cy="52" r="20" fill="url(#gradOrange)"/>
+        <polygon points="164,42 155,55 161,55 156,66 168,52 162,52" fill="#fff" opacity="0.95"/>
+
+        <!-- Floating sparks -->
+        <circle cx="225" cy="72"  r="4" fill="#f97316" opacity="0.5" class="spark-a"/>
+        <circle cx="95"  cy="100" r="3" fill="#dc2626" opacity="0.4" class="spark-b"/>
+        <circle cx="240" cy="130" r="3" fill="#fbbf24" opacity="0.5" class="spark-c"/>
+        <rect   x="80"  y="145"  width="10" height="10" rx="2" fill="#fed7aa" opacity="0.7" transform="rotate(20 80 145)" class="spark-a"/>
+        <rect   x="235" y="85"   width="8"  height="8"  rx="2" fill="#fca5a5" opacity="0.6" transform="rotate(-15 235 85)" class="spark-b"/>
+
+        <!-- Disconnected cable -->
+        <path d="M195 93 Q215 93 215 75 Q215 62 228 62" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round" fill="none"/>
+        <circle cx="230" cy="62" r="4" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+
+        <defs>
+          <linearGradient id="gradOrange" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#dc2626"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <!-- 500 code -->
+    <div class="se-code">
+      <span class="code-5">5</span>
+      <span class="code-0">0</span>
+      <span class="code-0b">0</span>
+    </div>
+
+    <!-- Badge -->
+    <div class="se-badge">Internal Server Error</div>
+
+    <!-- Heading & desc -->
+    <h1 class="se-title">Something went wrong on our end</h1>
+    <p class="se-desc">
+      Our servers are experiencing an issue right now.<br>
+      Please try again in a moment — we're working to fix it.
+    </p>
+
+    <!-- Actions -->
+    <div class="se-actions">
+      <button class="btn-primary" (click)="reload()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Try Again
+      </button>
+      <!-- <a class="btn-ghost" routerLink="/hrms/dashboard">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Go to Dashboard
+      </a> -->
+    </div>
+
+    <!-- Status dots -->
+    <div class="se-status">
+      <span class="status-dot dot-red"></span>
+      <span class="status-label">Server unreachable</span>
+    </div>
+
+    <p class="se-hint">
+      Error code: <strong>500</strong> &nbsp;·&nbsp; iConnect HRMS
+    </p>
+
+  </div>
+</div>

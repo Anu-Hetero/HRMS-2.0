@@ -1,0 +1,150 @@
+<div class="tab-content">
+
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Professional</h3>
+      @if (!isNew) {
+        @if (!editing['profProf']) {
+          <button class="btn-edit" (click)="startEdit.emit('profProf')">Edit</button>
+        } @else {
+          <div class="btn-group">
+            <button class="btn-cancel" (click)="cancelEdit.emit('profProf')">Cancel</button>
+            <button class="btn-save" (click)="saveProfProf.emit()">Save</button>
+          </div>
+        }
+      }
+    </div>
+    @if (!editing['profProf']) {
+      <div class="field-grid">
+        <div class="field-view"><span class="label">Department</span><span class="value">{{ displayVal(professionalData.professional.department) }}</span></div>
+        <div class="field-view"><span class="label">Section</span><span class="value">{{ displayVal(professionalData.professional.section) }}</span></div>
+        <div class="field-view"><span class="label">Designation</span><span class="value">{{ displayVal(professionalData.professional.designation) }}</span></div>
+        <div class="field-view"><span class="label">Paysheet Group</span><span class="value">{{ displayVal(professionalData.professional.paysheetGroup) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="profProfForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Department <span class="req">*</span></label><select formControlName="department"><option value="">Select</option>@for (o of departmentOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Section</label><select formControlName="section"><option value="">Select</option>@for (o of sectionOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Designation <span class="req">*</span></label><select formControlName="designation"><option value="">Select</option>@for (o of designationOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Paysheet Group <span class="req">*</span></label><select formControlName="paysheetGroup"><option value="">Select</option>@for (o of paysheetGroupOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+      </form>
+    }
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Work Location</h3>
+      @if (!isNew) {
+        @if (!editing['workLocation']) {
+          <button class="btn-edit" (click)="startEdit.emit('workLocation')">Edit</button>
+        } @else {
+          <div class="btn-group">
+            <button class="btn-cancel" (click)="cancelEdit.emit('workLocation')">Cancel</button>
+            <button class="btn-save" (click)="saveWorkLocation.emit()">Save</button>
+          </div>
+        }
+      }
+    </div>
+    @if (!editing['workLocation']) {
+      <div class="field-grid">
+        <div class="field-view"><span class="label">Head Quarter</span><span class="value">{{ displayVal(professionalData.workLocation.headQuarter) }}</span></div>
+        <div class="field-view"><span class="label">Region</span><span class="value">{{ displayVal(professionalData.workLocation.region) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="workLocationForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Head Quarter <span class="req">*</span></label><select formControlName="headQuarter"><option value="">Select</option>@for (o of headQuarterOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Region</label><select formControlName="region">@for (o of regionOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+      </form>
+    }
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Reporting Officer</h3>
+      @if (!isNew) {
+        @if (!editing['reportingOfficer']) {
+          <button class="btn-edit" (click)="startEdit.emit('reportingOfficer')">Edit</button>
+        } @else {
+          <div class="btn-group">
+            <button class="btn-cancel" (click)="cancelEdit.emit('reportingOfficer')">Cancel</button>
+            <button class="btn-save" (click)="saveReportingOfficer.emit()">Save</button>
+          </div>
+        }
+      }
+    </div>
+    @if (!editing['reportingOfficer']) {
+      <div class="field-grid">
+        <div class="field-view"><span class="label">Reporting Officer</span><span class="value">{{ displayVal(professionalData.reportingOfficer.reportingOfficer) }}</span></div>
+        <div class="field-view"><span class="label">Employee ID</span><span class="value">{{ displayVal(professionalData.reportingOfficer.employeeId) }}</span></div>
+        <div class="field-view"><span class="label">Is HOD</span><span class="value">{{ professionalData.reportingOfficer.isHOD ? 'Yes' : 'No' }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="reportingOfficerForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Reporting Officer <span class="req">*</span></label><input type="text" formControlName="reportingOfficer" /></div>
+        <div class="field-edit"><label>Employee ID</label><input type="text" formControlName="employeeId" /></div>
+        <div class="field-edit"><label class="checkbox-label"><input type="checkbox" formControlName="isHOD" /><span class="checkbox-text">Is HOD</span></label></div>
+      </form>
+    }
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Profile</h3>
+      @if (!isNew) {
+        @if (!editing['profProfile']) {
+          <button class="btn-edit" (click)="startEdit.emit('profProfile')">Edit</button>
+        } @else {
+          <div class="btn-group">
+            <button class="btn-cancel" (click)="cancelEdit.emit('profProfile')">Cancel</button>
+            <button class="btn-save" (click)="saveProfProfile.emit()">Save</button>
+          </div>
+        }
+      }
+    </div>
+    @if (!editing['profProfile']) {
+      <div class="field-grid">
+        <div class="field-view"><span class="label">Terms of Service</span><span class="value">{{ displayVal(professionalData.profile.termsOfService) }}</span></div>
+        <div class="field-view"><span class="label">Date of Joining</span><span class="value">{{ displayVal(professionalData.profile.dateOfJoining) }}</span></div>
+        <div class="field-view"><span class="label">Group Date of Joining</span><span class="value">{{ displayVal(professionalData.profile.groupDateOfJoining) }}</span></div>
+        <div class="field-view"><span class="label">First Date of Work</span><span class="value">{{ displayVal(professionalData.profile.firstDateOfWork) }}</span></div>
+        <div class="field-view"><span class="label">Date of Resign</span><span class="value">{{ displayVal(professionalData.profile.dateOfResign) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="profileForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Terms of Service <span class="req">*</span></label><select formControlName="termsOfService">@for (o of termsOfServiceOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Date of Joining <span class="req">*</span></label><input type="date" formControlName="dateOfJoining" /></div>
+        <div class="field-edit"><label>Group Date of Joining</label><input type="date" formControlName="groupDateOfJoining" /></div>
+        <div class="field-edit"><label>First Date of Work</label><input type="date" formControlName="firstDateOfWork" /></div>
+        <div class="field-edit"><label>Date of Resign</label><input type="date" formControlName="dateOfResign" /></div>
+      </form>
+    }
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <h3 class="section-title">Experience Level</h3>
+      @if (!isNew) {
+        @if (!editing['expLevel']) {
+          <button class="btn-edit" (click)="startEdit.emit('expLevel')">Edit</button>
+        } @else {
+          <div class="btn-group">
+            <button class="btn-cancel" (click)="cancelEdit.emit('expLevel')">Cancel</button>
+            <button class="btn-save" (click)="saveExpLevel.emit()">Save</button>
+          </div>
+        }
+      }
+    </div>
+    @if (!editing['expLevel']) {
+      <div class="field-grid">
+        <div class="field-view"><span class="label">Experience Level</span><span class="value">{{ displayVal(professionalData.experienceLevel.experienceLevel) }}</span></div>
+        <div class="field-view"><span class="label">Increment Type</span><span class="value">{{ displayVal(professionalData.experienceLevel.incrementType) }}</span></div>
+      </div>
+    } @else {
+      <form [formGroup]="expLevelForm" class="field-grid edit-grid">
+        <div class="field-edit"><label>Experience Level <span class="req">*</span></label><select formControlName="experienceLevel">@for (o of expLevelOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+        <div class="field-edit"><label>Increment Type <span class="req">*</span></label><select formControlName="incrementType">@for (o of incrementTypeOpts; track o) { <option [value]="o">{{ o }}</option> }</select></div>
+      </form>
+    }
+  </div>
+
+</div>
